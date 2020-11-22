@@ -1,4 +1,5 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Backend.Entities;
+using Microsoft.EntityFrameworkCore;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -8,6 +9,22 @@ namespace Backend.Data.Context
 {
     public class DataContext : DbContext
     {
-        
+        public DbSet<Student> Students { get; set; }
+        public DbSet<Professor> Professors { get; set; }
+        public DbSet<Test> Tests { get; set; }
+        public DbSet<Question> Questions { get; set; }
+        public DbSet<Answer> Answers { get; set; }
+        public DbSet<Enrolement> Enrolements { get; set; }
+        public DbSet<EnrolementAnswer> EnrolementAnswers { get; set; }
+
+
+        public DataContext(DbContextOptions<DataContext> options) : base(options)
+        {
+        }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+        }
+
     }
 }

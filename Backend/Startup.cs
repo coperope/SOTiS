@@ -1,6 +1,8 @@
+using Backend.Data.Context;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
@@ -27,6 +29,10 @@ namespace Backend
         {
 
             services.AddControllers();
+
+            services.AddDbContext<DataContext>(c =>
+                c.UseSqlServer(Configuration.GetConnectionString("SqlConnection")), ServiceLifetime.Singleton);
+
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "Backend", Version = "v1" });
