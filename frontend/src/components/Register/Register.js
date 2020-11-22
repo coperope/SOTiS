@@ -28,7 +28,7 @@ function Register() {
     } else {
       setConfirmPasswordAlertHidden('');
     }
-    return confirmPasswordAlertHidden == '' ? true : false;
+    return confirmPasswordAlertHidden === '' ? true : false;
   }
   const formValidation = (value, callback) => {
     if (value.length < 3) {
