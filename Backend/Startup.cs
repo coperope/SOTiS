@@ -1,4 +1,10 @@
+using Backend.CQRS.Commands;
+using Backend.CQRS.Queries;
 using Backend.Data.Context;
+using Backend.Extensions;
+using Backend.Middleware;
+using Backend.Utils.AppSettingsClasses;
+using MediatR;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Mvc;
@@ -11,6 +17,7 @@ using Microsoft.OpenApi.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection;
 using System.Threading.Tasks;
 
 namespace Backend
@@ -33,10 +40,18 @@ namespace Backend
             services.AddDbContext<DataContext>(c =>
                 c.UseSqlServer(Configuration.GetConnectionString("SqlConnection")), ServiceLifetime.Singleton);
 
+            // Extension methods
+            services.UseRepositories();
+            services.UseAutoMapper();
+            services.UseOtherDI();
+
+            services.AddMediatR(typeof(AuthenticateQuery).GetTypeInfo().Assembly);
+
             services.AddSwaggerGen(c =>
             {
                 c.SwaggerDoc("v1", new OpenApiInfo { Title = "Backend", Version = "v1" });
             });
+            services.Configure<JwtSecret>(Configuration.GetSection("JwtSecret"));
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -52,6 +67,8 @@ namespace Backend
             app.UseRouting();
 
             app.UseAuthorization();
+
+            app.UseMiddleware<JwtMiddleware>();
 
             app.UseEndpoints(endpoints =>
             {

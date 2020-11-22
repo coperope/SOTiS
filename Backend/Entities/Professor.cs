@@ -1,7 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
+﻿using System.Collections.Generic;
+using System.Text.Json.Serialization;
 
 namespace Backend.Entities
 {
@@ -9,6 +7,7 @@ namespace Backend.Entities
     {
         public int ProfessorId { get; set; }
         public string Username { get; set; }
+        [JsonIgnore]
         public string Password { get; set; }
         public string FirstName { get; set; }
         public string LastName { get; set; }
