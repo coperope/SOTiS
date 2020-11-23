@@ -35,7 +35,7 @@ namespace Backend.CQRS.CommandsHandlers
         public async Task<RegisterCommandResult> Handle(RegisterCommand request, CancellationToken cancellationToken)
         {
             var user = await _userRepository.GetUserByUsername(request.Username);
-            if (user == null)
+            if (user != null)
             {
                 return null;
             }
