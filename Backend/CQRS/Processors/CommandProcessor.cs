@@ -1,5 +1,6 @@
 ﻿using Backend.CQRS.Commands;
 using Backend.CQRS.CommandsResults;
+using MediatR;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -9,15 +10,22 @@ namespace Backend.CQRS.Processors
 {
     public class CommandProcessor : ICommandProcessor
     {
-        public ICommandResult Execute(ICommand command)
+        private readonly IMediator _mediator;
+
+        public CommandProcessor(IMediator mediator)
         {
-            // get claim (role name) from token
+            _mediator = mediator ?? throw new ArgumentNullException(nameof(mediator));
+        }
 
-            // check if command accepts that role, else throw error
+        public async Task<ICommandResult> Execute(ICommand command)
+        {
 
-            // send via mediatr
+            // check if query accepts that role, else throw error
 
-            throw new NotImplementedException();
+
+            var result = await _mediator.Send(command);
+
+            return result as ICommandResult;
         }
     }
 }

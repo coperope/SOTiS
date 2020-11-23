@@ -1,4 +1,5 @@
-﻿using Backend.CQRS.Processors;
+﻿using Backend.CQRS.Commands;
+using Backend.CQRS.Processors;
 using Backend.CQRS.Queries;
 using Backend.Utils.CustomAttributes;
 using Microsoft.AspNetCore.Mvc;
@@ -29,6 +30,17 @@ namespace Backend.Controllers
 
             if (response == null)
                 return BadRequest(new { message = "Username or password is incorrect" });
+
+            return Ok(response);
+        }
+
+        [HttpPost("register")]
+        public async Task<IActionResult> Register(RegisterCommand command)
+        {
+            var response = await _commandProcessor.Execute(command);
+
+            if (response == null)
+                return BadRequest(new { message = "You stupid moron." });
 
             return Ok(response);
         }

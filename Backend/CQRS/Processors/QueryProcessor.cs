@@ -17,13 +17,13 @@ namespace Backend.CQRS.Processors
             _mediator = mediator ?? throw new ArgumentNullException(nameof(mediator));
         }
 
-        public async Task<IQueryResult> Execute(IQuery command)
+        public async Task<IQueryResult> Execute(IQuery query)
         {
 
             // check if query accepts that role, else throw error
 
 
-            var result = await _mediator.Send(command);
+            var result = await _mediator.Send(query);
 
             return result as IQueryResult;
         }

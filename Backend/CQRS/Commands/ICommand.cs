@@ -4,8 +4,8 @@ using MediatR;
 
 namespace Backend.CQRS.Commands
 {
-    public interface ICommand : IRequest<ICommandResult>
+    public interface ICommand
     {
-        protected CQRSRole Permission { get; }
+        public CQRSRole Permission { get; }
     }
 }
