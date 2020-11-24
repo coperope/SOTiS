@@ -29,7 +29,9 @@ namespace Backend.Controllers
             var response = await _queryProcessor.Execute(query);
 
             if (response == null)
+            {
                 return BadRequest(new { message = "Username or password is incorrect" });
+            }
 
             return Ok(response);
         }
@@ -40,8 +42,10 @@ namespace Backend.Controllers
             var response = await _commandProcessor.Execute(command);
 
             if (response == null)
+            {
                 return BadRequest(new { message = "You stupid moron." });
-
+            }
+                
             return Ok(response);
         }
 

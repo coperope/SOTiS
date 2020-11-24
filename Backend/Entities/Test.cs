@@ -12,7 +12,7 @@ namespace Backend.Entities
 
         public int ProfessorId { get; set; }
         public Professor Professor { get; set; }
-
+        public string Description { get; set; }
         public ICollection<Question> Questions { get; set; }
 
         public ICollection<Enrolement> Enrolements { get; set; }

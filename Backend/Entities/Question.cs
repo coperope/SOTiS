@@ -14,5 +14,6 @@ namespace Backend.Entities
         public Test Test { get; set; }
 
         public ICollection<Answer> Answers { get; set; }
+        public bool IsMultipleChoice { get; set; }
     }
 }
