@@ -1,4 +1,5 @@
-﻿using Backend.CQRS.Processors;
+﻿using Backend.CQRS.Commands;
+using Backend.CQRS.Processors;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -22,10 +23,10 @@ namespace Backend.Controllers
         }
 
         [HttpPost("{professor_id}/tests")]
-        public async Task<IActionResult> MakeTest(String professor_id)
+        public async Task<IActionResult> MakeTest(String professor_id, MakeTestCommand makeTestCommand)
         {
-            System.Diagnostics.Debug.WriteLine("Make test:");
-            System.Diagnostics.Debug.WriteLine("Professor id: " + professor_id);
+            makeTestCommand.ProfessorId = int.Parse(professor_id);
+            var response = await _commandProcessor.Execute(makeTestCommand);
             return Ok();
         }
 

@@ -3,6 +3,8 @@ import './App.css';
 import React from 'react';
 import { HashRouter as Router, Route } from 'react-router-dom'
 import Login from './components/Login/Login.js'
+import ListTests from './components/ListTests/ListTests.js'
+
 import Register from './components/Register/Register.js'
 import Header from './components/Header/Header.js'
 function App() {
@@ -23,6 +25,11 @@ function App() {
         <Route exact path="/register" render={props => (
           <React.Fragment>
             <Register></Register>
+          </React.Fragment>
+        )} />
+        <Route exact path="/tests" render={props => (
+          <React.Fragment>
+            <ListTests></ListTests>
           </React.Fragment>
         )} />
       </div>

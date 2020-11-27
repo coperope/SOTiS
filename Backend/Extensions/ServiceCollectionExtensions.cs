@@ -12,6 +12,7 @@ namespace Backend.Extensions
             // Repositories dependency injection definitions
 
             services.AddScoped(typeof(IUserRepository), typeof(UserRepository));
+            services.AddScoped(typeof(ITestRepository), typeof(TestRepository));
 
 
             return services;

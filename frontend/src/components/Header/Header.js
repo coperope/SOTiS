@@ -21,8 +21,10 @@ import ChevronRightIcon from '@material-ui/icons/ChevronRight';
 import ListItem from '@material-ui/core/ListItem';
 import ListItemIcon from '@material-ui/core/ListItemIcon';
 import ListItemText from '@material-ui/core/ListItemText';
-import InboxIcon from '@material-ui/icons/MoveToInbox';
-import MailIcon from '@material-ui/icons/Mail';
+import LocalLibraryIcon from '@material-ui/icons/LocalLibrary';
+import AssignmentIcon from '@material-ui/icons/Assignment';
+import SchoolIcon from '@material-ui/icons/School';
+import { Link } from 'react-router-dom'
 
 const drawerWidth = 240;
 
@@ -79,17 +81,17 @@ function Header() {
   const handleDrawerClose = () => {
     setOpen(false);
   };
-/*   const handleChange = (event) => {
-    setAuth(event.target.checked);
-  };
- */
+  /*   const handleChange = (event) => {
+      setAuth(event.target.checked);
+    };
+   */
   const handleMenuProfile = (event) => {
     setanchorElProfile(event.currentTarget);
   };
   const handleMenuLinks = (event) => {
     setanchorElLinks(event.currentTarget)
   };
-  
+
   const handleClose = () => {
     setanchorElProfile(null);
     setanchorElLinks(null);
@@ -97,18 +99,18 @@ function Header() {
 
   return (
     <div className={classes.root}>
-{/*       <FormGroup>
+      {/*       <FormGroup>
         <FormControlLabel
           control={<Switch checked={auth} onChange={handleChange} aria-label="login switch" />}
           label={auth ? 'Logout' : 'Login'}
         />
       </FormGroup> */}
-      <AppBar position="static" classes={{colorPrimary: classes.barColor}}>
+      <AppBar position="static" classes={{ colorPrimary: classes.barColor }}>
         <Toolbar>
-          <IconButton 
-            edge="start" 
-            className={classes.menuButton} 
-            color="inherit" 
+          <IconButton
+            edge="start"
+            className={classes.menuButton}
+            color="inherit"
             aria-label="menu"
             onClick={handleDrawerOpen}
             edge="start"
@@ -133,25 +135,6 @@ function Header() {
               >
                 <AccountCircle />
               </IconButton>
-              <Menu
-                id="menu-user"
-                anchorEl={anchorElLinks}
-                anchorOrigin={{
-                  vertical: 'top',
-                  horizontal: 'right',
-                }}
-                keepMounted
-                transformOrigin={{
-                  vertical: 'top',
-                  horizontal: 'right',
-                }}
-                open={openLinksMenu}
-                onClose={handleClose}
-              >
-                <MenuItem onClick={handleClose}>Tests</MenuItem>
-                <MenuItem onClick={handleClose}>Example menu item</MenuItem>
-                <MenuItem onClick={handleClose}>Another example menu item</MenuItem>
-              </Menu>
               <Menu
                 id="menu-links"
                 anchorEl={anchorElProfile}
@@ -185,24 +168,27 @@ function Header() {
         }}
       >
         <div className={classes.drawerHeader}>
+          <Typography variant="h6" className={classes.title}>
+            Examinator
+          </Typography>
           <IconButton onClick={handleDrawerClose}>
             {theme.direction === 'ltr' ? <ChevronLeftIcon /> : <ChevronRightIcon />}
           </IconButton>
         </div>
         <Divider />
         <List>
-          {['Inbox', 'Starred', 'Send email', 'Drafts'].map((text, index) => (
-            <ListItem button key={text}>
-              <ListItemIcon>{index % 2 === 0 ? <InboxIcon /> : <MailIcon />}</ListItemIcon>
+          {['My tests', 'All tests'].map((text, index) => (
+            <ListItem button key={text} component={Link} to={index % 2 === 0 ? '/design' : '/tests'}>
+              <ListItemIcon>{index % 2 === 0 ? <AssignmentIcon /> : <LocalLibraryIcon />}</ListItemIcon>
               <ListItemText primary={text} />
             </ListItem>
           ))}
         </List>
         <Divider />
         <List>
-          {['All mail', 'Trash', 'Spam'].map((text, index) => (
-            <ListItem button key={text}>
-              <ListItemIcon>{index % 2 === 0 ? <InboxIcon /> : <MailIcon />}</ListItemIcon>
+          {['Status'].map((text, index) => (
+            <ListItem button key={text} >
+              <ListItemIcon>{<SchoolIcon />}</ListItemIcon>
               <ListItemText primary={text} />
             </ListItem>
           ))}
