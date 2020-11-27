@@ -1,6 +1,7 @@
 ﻿using Backend.Data.Context;
 using Backend.Data.Repositories.Interfaces;
 using Backend.Entities;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.ChangeTracking;
 using System;
 using System.Collections.Generic;
@@ -26,6 +27,12 @@ namespace Backend.Data.Repositories
                 return result;
             }
             return null;
+        }
+
+        public List<Test> GetTests()
+        {
+            List<Test> result = _context.Tests.Include("Questions.Answers").ToList();
+            return result;
         }
     }
 }

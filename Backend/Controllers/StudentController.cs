@@ -1,4 +1,5 @@
 ﻿using Backend.CQRS.Processors;
+using Backend.CQRS.Queries;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -33,7 +34,8 @@ namespace Backend.Controllers
         [HttpGet("tests")]
         public async Task<IActionResult> GetAllTests()
         {
-            return Ok();
+            var result = await _queryProcessor.Execute(new GetAllTestsQuery());
+            return Ok(result);
         }
 
         [HttpGet("{student_id}/test/{test_id}")]
