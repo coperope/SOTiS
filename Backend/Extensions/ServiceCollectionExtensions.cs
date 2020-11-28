@@ -1,6 +1,8 @@
-﻿using Backend.CQRS.Processors;
+﻿using AutoMapper;
+using Backend.CQRS.Processors;
 using Backend.Data.Repositories;
 using Backend.Data.Repositories.Interfaces;
+using Backend.Utils.Mapper;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Backend.Extensions
@@ -21,7 +23,13 @@ namespace Backend.Extensions
         public static IServiceCollection UseAutoMapper(this IServiceCollection services)
         {
             // Automapper dependency injection configuration
+            var mapperConfig = new MapperConfiguration(mc =>
+            {
+                mc.AddProfile(new Mapping());
+            });
 
+            IMapper mapper = mapperConfig.CreateMapper();
+            services.AddSingleton(mapper);
             return services;
         }
 

@@ -29,9 +29,9 @@ namespace Backend.Data.Repositories
             return null;
         }
 
-        public List<Test> GetTests()
+        public async Task<List<Test>> GetTests()
         {
-            List<Test> result = _context.Tests.Include("Questions.Answers").ToList();
+            List<Test> result = await _context.Tests.Include("Questions.Answers").ToListAsync();
             return result;
         }
     }

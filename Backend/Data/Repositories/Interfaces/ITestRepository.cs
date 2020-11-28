@@ -10,6 +10,6 @@ namespace Backend.Data.Repositories.Interfaces
     public interface ITestRepository
     {
         public Task<EntityEntry<Test>> MakeTest(Test test);
-        public List<Test> GetTests();
+        public Task<List<Test>> GetTests();
     }
 }
