@@ -1,8 +1,12 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom'
 import './Login.css';
+import { BASE_URL, LOGIN } from '../../utils/apiUrls';
+import { saveUser, saveToken } from '../../utils/authUtils';
+import { useHistory } from 'react-router';
 
 function Login() {
+  const history = useHistory();
   const [usernameAlertHidden, setUsernameAlertHidden] = useState(true);
   const [passwordAlertHidden, setPasswordAlertHidden] = useState(true);
   const [password, setPassword] = useState('');
@@ -31,17 +35,18 @@ function Login() {
       formValidation(password, () => {
         console.log('sending request...')
         if (usernameAlertHidden && passwordAlertHidden) {
-          /* Todo: uncomment and correct when backend available.
           const requestOptions = {
             method: 'POST',
-            headers: { 'content-type': 'application/json' },
+            headers: {
+              Accept: 'application/json, text/plain, */*',
+              'Content-Type': 'application/json;charset=UTF-8'
+            },
             body: JSON.stringify({
-              username: this.state.username,
-              password: this.state.password
+              Username: username,
+              Password: password
             })
           };
-          const url = process.env.NODE_ENV === 'production' ? "rest/chat/users/login" : "http://localhost:8080/ChatWar/rest/chat/users/login";
-
+          const url = process.env.NODE_ENV === 'production' ? LOGIN : BASE_URL + LOGIN;
           fetch(url, requestOptions)
             .then((response) => {
               if (!response.ok) {
@@ -54,13 +59,15 @@ function Login() {
             })
             .then((data) => {
               if (data?.username) {
-                this.props.setLoggedInUser(data);
-                this.props.history.push('/chat');
+                const {token, ...user} = data;
+                saveToken(token);
+                saveUser(user);
+                history.push("/tests");
               }
             })
             .catch((error) => {
               console.log(error);
-            });*/
+            });
         }
       })
     }

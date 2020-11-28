@@ -5,8 +5,9 @@ import {
   Grid,
 } from '@material-ui/core';
 
-import { GET_ALL_TESTS } from '../../utils/apiUrls';
+import { BASE_URL, GET_ALL_TESTS } from '../../utils/apiUrls';
 import useFetch from '../../hooks/useFetch';
+import TestAccordion from '../TestAccordion/TestAccordion';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -24,18 +25,17 @@ const useStyles = makeStyles((theme) => ({
 const ListTests = () => {
   const classes = useStyles();
   const [tests, setTests] = useState([]);
-  const fetchData = useFetch(GET_ALL_TESTS, {});
+  const { data, executeFetch } = useFetch(BASE_URL + GET_ALL_TESTS, "get");
 
 
   useEffect(() => {
-    async function fetch() {
-      const {response, error} = await fetchData();
-      console.log(response);
-      console.log(error);
+    if (data) {
+      setTests(data.tests);
     }
-    fetch()
-   
-  }, []);
+    console.log(tests);
+
+  }, [data]);
+
 
   return (
     <div className={classes.root}>
@@ -43,17 +43,27 @@ const ListTests = () => {
         <Grid item xs={12}>
           <Typography variant="h4" className={classes.title}>
             All tests
-        </Typography>
+          </Typography>
+        </Grid>
+        <Grid container
+          spacing={3}
+          justify="center"
+          alignItems="center"
+          style={{paddingTop: "3em"}} >
+
+          {tests.map((test: any) => (
+            <Grid item xs={8}>
+              <TestAccordion
+                testId={test.id}
+                title={test.title}
+                description={test.description}
+                status={"NOT-ENROLED"}
+                professor={test.professor.firstName + " " + test.professor.lastName}
+              />
+            </Grid>
+          ))}
         </Grid>
 
-        <Grid item xs={12} spacing={2}>
-          <Typography variant="h6" className={classes.title}>
-            All tests
-        </Typography>
-          <Typography variant="h6" className={classes.title}>
-            All tests
-        </Typography>
-        </Grid>
 
       </Grid>
 
