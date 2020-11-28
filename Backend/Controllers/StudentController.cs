@@ -1,4 +1,5 @@
-﻿using Backend.CQRS.Processors;
+﻿using Backend.CQRS.Commands;
+using Backend.CQRS.Processors;
 using Backend.CQRS.Queries;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -23,11 +24,9 @@ namespace Backend.Controllers
         }
 
         [HttpPost("{student_id}/test/{test_id}")]
-        public async Task<IActionResult> TakeTest(String student_id, String test_id)
+        public async Task<IActionResult> TakeTest(String student_id, String test_id, TakeTestCommand takeTestCommand)
         {
-            System.Diagnostics.Debug.WriteLine("Take test:");
-            System.Diagnostics.Debug.WriteLine("Student id: " + student_id);
-            System.Diagnostics.Debug.WriteLine ("Testt id: " + test_id);
+            var result = await _commandProcessor.Execute(takeTestCommand);
             return Ok();
         }
 
