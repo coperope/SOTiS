@@ -34,5 +34,10 @@ namespace Backend.Data.Repositories
             List<Test> result = await _context.Tests.Include("Questions.Answers").ToListAsync();
             return result;
         }
+
+        public async Task<int> TakeTest(Test test)
+        {
+            return 2;
+        }
     }
 }
