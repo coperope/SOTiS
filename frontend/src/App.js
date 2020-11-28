@@ -3,7 +3,7 @@ import './App.css';
 import React from 'react';
 import { HashRouter as Router, Route } from 'react-router-dom'
 import Login from './components/Login/Login.js'
-import ListTests from './components/ListTests/ListTests.js'
+import ListTests from './components/ListTests/ListTests.tsx'
 
 import Register from './components/Register/Register.js'
 import Header from './components/Header/Header.js'
