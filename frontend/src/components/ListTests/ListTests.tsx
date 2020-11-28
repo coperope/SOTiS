@@ -25,17 +25,13 @@ const useStyles = makeStyles((theme) => ({
 const ListTests = () => {
   const classes = useStyles();
   const [tests, setTests] = useState([]);
-  const { data, executeFetch } = useFetch(BASE_URL + GET_ALL_TESTS, "get");
-
+  const { data } = useFetch(BASE_URL + GET_ALL_TESTS, "get");
 
   useEffect(() => {
     if (data) {
       setTests(data.tests);
     }
-    console.log(tests);
-
   }, [data]);
-
 
   return (
     <div className={classes.root}>
@@ -49,10 +45,10 @@ const ListTests = () => {
           spacing={3}
           justify="center"
           alignItems="center"
-          style={{paddingTop: "3em"}} >
+          style={{ paddingTop: "3em" }} >
 
           {tests.map((test: any) => (
-            <Grid item xs={8}>
+            <Grid item xs={8} key={test.id}>
               <TestAccordion
                 testId={test.id}
                 title={test.title}

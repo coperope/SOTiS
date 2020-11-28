@@ -1,15 +1,16 @@
 import React, { useEffect, useState } from 'react';
+import { getToken } from '../utils/authUtils';
 
 const generateOptions =(
   method: string,
   body: object,
-  token: string
+  token: string | null
 ) => {
   let options = {};
   if (method === "get"){
     options = {
       headers: {
-        //Authorization: `Bearer ${token}`,
+        Authorization: `Bearer ${token}`,
         Accept: "application/json",
       },
       method: method,
@@ -17,7 +18,7 @@ const generateOptions =(
   } else {
     options = {
       headers: {
-        //Authorization: `Bearer ${token}`,
+        Authorization: `Bearer ${token}`,
         Accept: "application/json",
         "Content-Type": "application/json",
       },
@@ -49,7 +50,8 @@ const useFetch = (
 
     setIsLoading(true);
     try {
-      const token = "temp";
+      const token = getToken();
+      console.log(token);
       const options = generateOptions(method, body, token);
 
       const response = await fetch(url, options);

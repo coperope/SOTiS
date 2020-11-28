@@ -5,8 +5,9 @@ using System.Threading.Tasks;
 
 namespace Backend.CQRS.CommandsResults
 {
-    public class TakeTestCommandResult : ICommandResult
+    public class SubmitTestCommandResult : ICommandResult
     {
-        public int Id { get; set; }
+        public bool Success { get; set; }
+        public int EnrolementId { get; set; }
     }
 }

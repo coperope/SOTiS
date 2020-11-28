@@ -3,7 +3,9 @@ using Backend.CQRS.Queries;
 using Backend.CQRS.QueriesResults;
 using Backend.Data.Repositories.Interfaces;
 using Backend.Entities;
+using Backend.Utils.Enums;
 using MediatR;
+using Microsoft.AspNetCore.Http;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,6 +18,7 @@ namespace Backend.CQRS.QueriesHandlers
     {
         private ITestRepository _testRepository;
         private IMapper _mapper;
+
         public GetAllTestsQueryHandler(ITestRepository testRepository, IMapper mapper)
         {
             _testRepository = testRepository ?? throw new ArgumentNullException(nameof(testRepository));

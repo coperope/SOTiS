@@ -8,6 +8,8 @@ namespace Backend.CQRS.Queries
     public class AuthenticateQuery : IQuery, IRequest<AuthenticateQueryResult>
     {
         public CQRSRole Permission { get; } = CQRSRole.All;
+        public int? UserId { get; set; }
+
         [Required]
         public string Username { get; set; }
         [Required]

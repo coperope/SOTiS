@@ -1,10 +1,7 @@
 ﻿using AutoMapper;
+using Backend.CQRS.Commands;
 using Backend.CQRS.QueriesResults;
 using Backend.Entities;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
 
 namespace Backend.Utils.Mapper
 {
@@ -13,6 +10,12 @@ namespace Backend.Utils.Mapper
         public Mapping()
         {
             CreateMap<Test, TestView>().ReverseMap();
+            CreateMap<ProfessorTestView, Professor>().ReverseMap();
+
+            CreateMap<SubmitTestTest, Test>().ReverseMap();
+            CreateMap<SubmitTestQuestion, Question>().ReverseMap();
+            CreateMap<SubmitTestAnswer, Answer>().ReverseMap();
+
         }
     }
 }

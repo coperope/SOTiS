@@ -7,6 +7,7 @@ using Backend.Utils.AppSettingsClasses;
 using MediatR;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
@@ -39,6 +40,7 @@ namespace Backend
                 options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
             services.AddDbContext<DataContext>(c =>
                 c.UseSqlServer(Configuration.GetConnectionString("SqlConnection")), ServiceLifetime.Singleton);
+            services.AddHttpContextAccessor();
 
             // Extension methods
             services.UseRepositories();
@@ -67,10 +69,10 @@ namespace Backend
             app.UseRouting();
 
             app.UseCors(builder => builder.AllowAnyMethod().AllowAnyHeader().AllowCredentials().WithOrigins("http://localhost:3000"));
+            app.UseMiddleware<JwtMiddleware>();
 
             app.UseAuthorization();
 
-            app.UseMiddleware<JwtMiddleware>();
 
             app.UseEndpoints(endpoints =>
             {

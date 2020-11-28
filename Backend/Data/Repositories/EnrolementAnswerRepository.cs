@@ -8,36 +8,27 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 
+
 namespace Backend.Data.Repositories
 {
-    public class TestRepository : ITestRepository
+    public class EnrolementAnswerRepository : IEnrolementAnswerRepository
     {
         protected readonly DataContext _context;
 
-        public TestRepository(DataContext context)
+        public EnrolementAnswerRepository(DataContext context)
         {
             _context = context ?? throw new ArgumentNullException(nameof(context));
         }
-        public async Task<EntityEntry<Test>> MakeTest(Test test)
+
+        public async Task<EnrolementAnswer> CreateEnrolementAnswer(EnrolementAnswer enrolementAnswer)
         {
-            EntityEntry<Test> result = await _context.Tests.AddAsync(test);
+            EntityEntry<EnrolementAnswer> result = await _context.EnrolementAnswers.AddAsync(enrolementAnswer);
             _context.SaveChanges();
             if (result != null)
             {
-                return result;
+                return result.Entity;
             }
             return null;
-        }
-
-        public async Task<List<Test>> GetTests()
-        {
-            List<Test> result = await _context.Tests.Include(t => t.Questions).ThenInclude(q => q.Answers).ToListAsync();
-            return result;
-        }
-
-        public async Task<int> TakeTest(Test test)
-        {
-            return 2;
         }
     }
 }

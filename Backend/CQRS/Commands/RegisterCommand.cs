@@ -8,6 +8,8 @@ namespace Backend.CQRS.Commands
     public class RegisterCommand : ICommand, IRequest<RegisterCommandResult>
     {
         public CQRSRole Permission { get; } = CQRSRole.All;
+        public int? UserId { get; set; }
+
         [Required]
         public string Username { get; set; }
         [Required]

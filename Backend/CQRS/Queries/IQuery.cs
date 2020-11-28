@@ -7,5 +7,7 @@ namespace Backend.CQRS.Queries
     public interface IQuery
     {
         public CQRSRole Permission { get; }
+        public int? UserId { get; set; }
+
     }
 }

@@ -7,5 +7,6 @@ namespace Backend.CQRS.Commands
     public interface ICommand
     {
         public CQRSRole Permission { get; }
+        public int? UserId { get; set;  }
     }
 }

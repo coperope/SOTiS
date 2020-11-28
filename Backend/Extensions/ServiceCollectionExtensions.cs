@@ -15,6 +15,10 @@ namespace Backend.Extensions
 
             services.AddScoped(typeof(IUserRepository), typeof(UserRepository));
             services.AddScoped(typeof(ITestRepository), typeof(TestRepository));
+            services.AddScoped(typeof(IEnrolementRepository), typeof(EnrolementRepository));
+            services.AddScoped(typeof(IEnrolementAnswerRepository), typeof(EnrolementAnswerRepository));
+            services.AddScoped(typeof(IQuestionRepository), typeof(QuestionRepository));
+            services.AddScoped(typeof(IAnswerRepository), typeof(AnswerRepository));
 
 
             return services;

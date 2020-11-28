@@ -11,5 +11,7 @@ namespace Backend.CQRS.Queries
     public class GetAllTestsQuery : IQuery, IRequest<GetAllTestsQueryResult>
     {
         public CQRSRole Permission { get; } = CQRSRole.All;
+        public int? UserId { get; set; }
+
     }
 }

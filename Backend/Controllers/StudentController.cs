@@ -24,7 +24,7 @@ namespace Backend.Controllers
         }
 
         [HttpPost("{student_id}/test/{test_id}")]
-        public async Task<IActionResult> TakeTest(String student_id, String test_id, TakeTestCommand takeTestCommand)
+        public async Task<IActionResult> TakeTest(String student_id, String test_id, SubmitTestCommand takeTestCommand)
         {
             var result = await _commandProcessor.Execute(takeTestCommand);
             return Ok();

@@ -13,6 +13,7 @@ namespace Backend.CQRS.Commands
     public class MakeTestCommand : ICommand, IRequest<MakeTestCommandResult>
     {
         public CQRSRole Permission { get; } = CQRSRole.Professor;
+        public int? UserId { get; set; }
 
         [Required]
         public string Title { get; set; }
