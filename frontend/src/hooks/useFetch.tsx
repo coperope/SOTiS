@@ -51,7 +51,6 @@ const useFetch = (
     setIsLoading(true);
     try {
       const token = getToken();
-      console.log(token);
       const options = generateOptions(method, body, token);
 
       const response = await fetch(url, options);

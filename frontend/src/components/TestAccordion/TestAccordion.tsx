@@ -1,5 +1,6 @@
 import React from 'react';
-import { Accordion, AccordionSummary, AccordionDetails, AccordionActions, Typography, Button, Grid } from '@material-ui/core';
+import { useHistory } from 'react-router-dom'
+import { Accordion, AccordionSummary, AccordionDetails, AccordionActions, Typography, Button, Grid, Link } from '@material-ui/core';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 
 import { useStyles } from './styles'
@@ -8,12 +9,13 @@ interface TestAccordionProps {
   testId: number,
   title: string,
   description: string,
-  status: string,
+  completed: string,
   professor: string,
 }
 
 const TestAccordion = (props: TestAccordionProps) => {
   const classes = useStyles();
+  const history = useHistory();
 
   return (
     <Accordion>
@@ -40,9 +42,25 @@ const TestAccordion = (props: TestAccordionProps) => {
         </Grid>
       </AccordionDetails>
       <AccordionActions>
-        <Button variant="contained" color="primary" className={classes.button}>
-          Enroll
-        </Button>
+        {props.completed ?
+          <Button onClick= {() => history.push(`/student/test/${props.testId}`) } variant="contained" color="primary" className={classes.button}>
+            Show results
+          </Button>
+        //   <Link
+        //   component="button"
+        //   variant="body2"
+        //   onClick={() => {
+        //     console.info("I'm a button.");
+        //   }}
+        // >
+        //   Button Link
+        // </Link>
+          :
+          <Button variant="contained" color="primary" className={classes.button}>
+            Enroll
+          </Button>
+        }
+
       </AccordionActions>
     </Accordion>
   );

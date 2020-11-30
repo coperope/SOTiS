@@ -62,7 +62,7 @@ function Login() {
                 const {token, ...user} = data;
                 saveToken(token);
                 saveUser(user);
-                history.push("/tests");
+                history.push("/student/tests");
               }
             })
             .catch((error) => {

@@ -5,7 +5,10 @@ import {
   Grid,
 } from '@material-ui/core';
 
-import { BASE_URL, GET_ALL_TESTS } from '../../utils/apiUrls';
+import { 
+  BASE_URL,
+  GET_ALL_TESTS,
+} from '../../utils/apiUrls';
 import useFetch from '../../hooks/useFetch';
 import TestAccordion from '../TestAccordion/TestAccordion';
 
@@ -48,22 +51,18 @@ const ListTests = () => {
           style={{ paddingTop: "3em" }} >
 
           {tests.map((test: any) => (
-            <Grid item xs={8} key={test.id}>
+            <Grid item xs={8} key={test.testId}>
               <TestAccordion
-                testId={test.id}
+                testId={test.testId}
                 title={test.title}
                 description={test.description}
-                status={"NOT-ENROLED"}
+                completed={test.completed}
                 professor={test.professor.firstName + " " + test.professor.lastName}
               />
             </Grid>
           ))}
         </Grid>
-
-
       </Grid>
-
-
     </div>
   );
 }
