@@ -14,7 +14,6 @@ interface TestAccordionProps {
 
 const TestAccordion = (props: TestAccordionProps) => {
   const classes = useStyles();
-
   return (
     <Accordion>
       <AccordionSummary

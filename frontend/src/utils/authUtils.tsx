@@ -15,9 +15,23 @@ const getUser = () => {
   return localStorage.getItem('user');
 }
 
+const getUserPermission = () => {
+  const temp: string = getUser() || '{}'; 
+  if (Object.keys(temp).length !== 0) {
+    return JSON.parse(temp).permission;
+  }
+  return null;
+}
+
+const logout = () => {
+  localStorage.clear();
+}
+
 export {
   saveToken,
   getToken,
   saveUser,
-  getUser
+  getUser,
+  logout,
+  getUserPermission
 }

@@ -25,7 +25,8 @@ import LocalLibraryIcon from '@material-ui/icons/LocalLibrary';
 import AssignmentIcon from '@material-ui/icons/Assignment';
 import SchoolIcon from '@material-ui/icons/School';
 import { Link } from 'react-router-dom'
-
+import { getUserPermission, getUser, logout } from '../../utils/authUtils';
+import { useHistory } from 'react-router';
 const drawerWidth = 240;
 
 const useStyles = makeStyles((theme) => ({
@@ -56,26 +57,24 @@ const useStyles = makeStyles((theme) => ({
     ...theme.mixins.toolbar,
     justifyContent: 'flex-end',
   },
-  menuButton: {
-    marginRight: theme.spacing(2),
-  },
   hide: {
     display: 'none',
   }
 }));
 
 function Header() {
+  const history = useHistory();
   const classes = useStyles();
   const theme = useTheme();
   const [auth, setAuth] = React.useState(true);
   const [anchorElProfile, setanchorElProfile] = React.useState(null);
-  const [anchorElLinks, setanchorElLinks] = React.useState(null);
   const openProfileMenu = Boolean(anchorElProfile);
-  const openLinksMenu = Boolean(anchorElLinks);
   const [open, setOpen] = React.useState(false);
 
   const handleDrawerOpen = () => {
-    setOpen(true);
+    if (getUser()) {
+      setOpen(true);
+    }
   };
 
   const handleDrawerClose = () => {
@@ -88,14 +87,19 @@ function Header() {
   const handleMenuProfile = (event) => {
     setanchorElProfile(event.currentTarget);
   };
-  const handleMenuLinks = (event) => {
-    setanchorElLinks(event.currentTarget)
-  };
 
   const handleClose = () => {
     setanchorElProfile(null);
-    setanchorElLinks(null);
   };
+  const logOut = () => {
+    handleClose();
+    logout();
+    redirect('login');
+  };
+  const redirect = (path) => {
+    handleClose();
+    history.push("/" + path);
+  }
 
   return (
     <div className={classes.root}>
@@ -109,12 +113,9 @@ function Header() {
         <Toolbar>
           <IconButton
             edge="start"
-            className={classes.menuButton}
             color="inherit"
             aria-label="menu"
             onClick={handleDrawerOpen}
-            edge="start"
-            color="inherit"
             className={clsx(classes.menuButton, open && classes.hide)}
           >
             <MenuIcon />
@@ -131,7 +132,7 @@ function Header() {
                 onClick={handleMenuProfile}
                 edge="start"
                 color="inherit"
-                className={clsx(classes.menuButton, open && classes.hide)}
+                className={clsx(classes.menuButton)}
               >
                 <AccountCircle />
               </IconButton>
@@ -150,50 +151,73 @@ function Header() {
                 open={openProfileMenu}
                 onClose={handleClose}
               >
-                <MenuItem onClick={handleClose}>Profile</MenuItem>
-                <MenuItem onClick={handleClose}>My account</MenuItem>
-                <MenuItem onClick={handleClose}>Log out</MenuItem>
+                {!getUser() &&
+                  <div>
+                    <MenuItem onClick={() => redirect('login')}>Log in</MenuItem>
+                    <MenuItem onClick={() => redirect('register')}>Register</MenuItem>
+                  </div>
+                }
+                {getUser() &&
+                  <div>
+                    <MenuItem onClick={() => redirect('account')}>My account</MenuItem>
+                    <MenuItem onClick={logOut}>Log out</MenuItem>
+                  </div>
+                }
               </Menu>
             </div>
           )}
         </Toolbar>
       </AppBar>
-      <Drawer
-        className={classes.drawer}
-        variant="persistent"
-        anchor="left"
-        open={open}
-        classes={{
-          paper: classes.drawerPaper,
-        }}
-      >
-        <div className={classes.drawerHeader}>
-          <Typography variant="h6" className={classes.title}>
-            Examinator
+      {getUser() &&
+        <Drawer
+          className={classes.drawer}
+          variant="persistent"
+          anchor="left"
+          open={open}
+          classes={{
+            paper: classes.drawerPaper,
+          }}
+        >
+          <div className={classes.drawerHeader}>
+            <Typography variant="h6" className={classes.title}>
+              Examinator
           </Typography>
-          <IconButton onClick={handleDrawerClose}>
-            {theme.direction === 'ltr' ? <ChevronLeftIcon /> : <ChevronRightIcon />}
-          </IconButton>
-        </div>
-        <Divider />
-        <List>
-          {['My tests', 'All tests'].map((text, index) => (
-            <ListItem button key={text} component={Link} to={index % 2 === 0 ? '/design' : '/tests'}>
-              <ListItemIcon>{index % 2 === 0 ? <AssignmentIcon /> : <LocalLibraryIcon />}</ListItemIcon>
-              <ListItemText primary={text} />
-            </ListItem>
-          ))}
-        </List>
-        <Divider />
-        <List>
-          {['Status'].map((text, index) => (
-            <ListItem button key={text} >
-              <ListItemIcon>{<SchoolIcon />}</ListItemIcon>
-              <ListItemText primary={text} />
-            </ListItem>
-          ))}
-        </List>
-      </Drawer>
+            <IconButton onClick={handleDrawerClose}>
+              {theme.direction === 'ltr' ? <ChevronLeftIcon /> : <ChevronRightIcon />}
+            </IconButton>
+          </div>
+          <Divider />
+          {getUserPermission() === 0 &&
+            <List>
+              {['My tests', 'All tests'].map((text, index) => (
+                <ListItem button key={text} component={Link} to={index % 2 === 0 ? '/myTests' : '/tests'}>
+                  <ListItemIcon>{index % 2 === 0 ? <AssignmentIcon /> : <LocalLibraryIcon />}</ListItemIcon>
+                  <ListItemText primary={text} />
+                </ListItem>
+              ))}
+            </List>
+          }
+          {getUserPermission() === 1 &&
+            <List>
+              {['Create test', 'All tests'].map((text, index) => (
+                <ListItem button key={text} component={Link} to={index % 2 === 0 ? '/createTest' : '/tests'}>
+                  <ListItemIcon>{index % 2 === 0 ? <AssignmentIcon /> : <LocalLibraryIcon />}</ListItemIcon>
+                  <ListItemText primary={text} />
+                </ListItem>
+              ))}
+            </List>
+          }
+          <Divider />
+          <List>
+            {['Status'].map((text, index) => (
+              <ListItem button key={text} >
+                <ListItemIcon>{<SchoolIcon />}</ListItemIcon>
+                <ListItemText primary={text} />
+              </ListItem>
+            ))}
+          </List>
+        </Drawer>
+      }
     </div>
   );
 }

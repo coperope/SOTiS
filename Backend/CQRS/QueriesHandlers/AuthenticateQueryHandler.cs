@@ -67,7 +67,8 @@ namespace Backend.CQRS.QueriesHandlers
                     Token = token,
                     FirstName = st.FirstName,
                     LastName = st.LastName,
-                    Username = st.Username
+                    Username = st.Username,
+                    Permission = CQRSRole.Student
                 };
             }
             else 
@@ -80,7 +81,8 @@ namespace Backend.CQRS.QueriesHandlers
                     Token = token,
                     FirstName = prof.FirstName,
                     LastName = prof.LastName,
-                    Username = prof.Username
+                    Username = prof.Username,
+                    Permission = CQRSRole.Professor
                 };
             }
 

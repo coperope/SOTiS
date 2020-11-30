@@ -32,6 +32,11 @@ function App() {
             <ListTests></ListTests>
           </React.Fragment>
         )} />
+        <Route exact path="/createTest" render={props => (
+          <React.Fragment>
+            <ListTests></ListTests>
+          </React.Fragment>
+        )} />
       </div>
     </Router>
   );
