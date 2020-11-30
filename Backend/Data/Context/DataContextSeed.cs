@@ -117,6 +117,14 @@ namespace Backend.Data.Context
             context.Enrolements.RemoveRange(context.Enrolements);
             context.EnrolementAnswers.RemoveRange(context.EnrolementAnswers);
             context.SaveChanges();
+
+            context.Database.ExecuteSqlRaw("DBCC CHECKIDENT('Students', RESEED, 0)");
+            context.Database.ExecuteSqlRaw("DBCC CHECKIDENT('Professors', RESEED, 0)");
+            context.Database.ExecuteSqlRaw("DBCC CHECKIDENT('Tests', RESEED, 0)");
+            context.Database.ExecuteSqlRaw("DBCC CHECKIDENT('Questions', RESEED, 0)");
+            context.Database.ExecuteSqlRaw("DBCC CHECKIDENT('Answers', RESEED, 0)");
+            context.Database.ExecuteSqlRaw("DBCC CHECKIDENT('Enrolements', RESEED, 0)");
+            context.Database.ExecuteSqlRaw("DBCC CHECKIDENT('EnrolementAnswers', RESEED, 0)");
         }
     }
 }

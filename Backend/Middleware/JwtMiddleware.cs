@@ -63,23 +63,23 @@ namespace Backend.Middleware
             }
         }
 
-        private async void populateContext(string username, HttpContext context, IUserRepository userRepository)
+        private void populateContext(string username, HttpContext context, IUserRepository userRepository)
         {
-            var user = await userRepository.GetUserByUsername(username);
+            var user = userRepository.GetUserByUsername(username);
 
-            if (user == null)
+            if (user.Result == null)
             {
                 return;
             }
 
-            if (user.GetType() == typeof(Student))
+            if (user.Result.GetType() == typeof(Student))
             {
-                context.Items["UserId"] = ((Student)user).StudentId;
+                context.Items["UserId"] = ((Student)user.Result).StudentId;
                 context.Items["UserRole"] = CQRSRole.Student;
 
-            } else if (user.GetType() == typeof(Professor))
+            } else if (user.Result.GetType() == typeof(Professor))
             {
-                context.Items["UserId"] = ((Professor)user).ProfessorId;
+                context.Items["UserId"] = ((Professor)user.Result).ProfessorId;
                 context.Items["UserRole"] = CQRSRole.Professor;
             }
 

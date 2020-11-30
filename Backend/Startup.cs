@@ -39,7 +39,7 @@ namespace Backend
             services.AddControllers().AddNewtonsoftJson(options =>
                 options.SerializerSettings.ReferenceLoopHandling = Newtonsoft.Json.ReferenceLoopHandling.Ignore);
             services.AddDbContext<DataContext>(c =>
-                c.UseSqlServer(Configuration.GetConnectionString("SqlConnection")), ServiceLifetime.Singleton);
+                c.UseSqlServer(Configuration.GetConnectionString("SqlConnection")), ServiceLifetime.Scoped);
             services.AddHttpContextAccessor();
 
             // Extension methods

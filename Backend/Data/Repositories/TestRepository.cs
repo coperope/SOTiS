@@ -29,15 +29,27 @@ namespace Backend.Data.Repositories
             return null;
         }
 
-        public async Task<List<Test>> GetTests()
+        public async Task<List<Test>> GetTestsWithProfessor()
         {
-            List<Test> result = await _context.Tests.Include(t => t.Questions).ThenInclude(q => q.Answers).ToListAsync();
+            List<Test> result = await _context.Tests
+                .Include(t => t.Professor)
+                .ToListAsync();
             return result;
         }
 
-        public async Task<int> TakeTest(Test test)
+        public async Task<Test> GetSingleTestById(int id)
         {
-            return 2;
+            return await _context.Tests.FirstOrDefaultAsync(t => t.TestId == id);
+        }
+
+        public async Task<Test> GetSingleTestByIdWithIncludes(int id)
+        {
+            return await _context.Tests
+                .Where(t => t.TestId == id)
+                .Include(t => t.Professor)
+                .Include(t => t.Questions)
+                    .ThenInclude(q => q.Answers)
+                .FirstOrDefaultAsync();
         }
     }
 }

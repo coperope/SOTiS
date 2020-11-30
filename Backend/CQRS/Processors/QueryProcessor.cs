@@ -15,14 +15,14 @@ namespace Backend.CQRS.Processors
         private readonly IMediator _mediator;
         private IHttpContextAccessor _httpContext;
 
-        public QueryProcessor(IMediator mediator, IHttpContextAccessor context)
+        public QueryProcessor(IMediator mediator)
         {
             _mediator = mediator ?? throw new ArgumentNullException(nameof(mediator));
-            _httpContext = context ?? throw new ArgumentNullException(nameof(context));
         }
 
-        public async Task<IQueryResult> Execute(IQuery query)
+        public async Task<IQueryResult> Execute(IQuery query, IHttpContextAccessor context)
         {
+            _httpContext = context;
 
             if (!hasValidPermission(query.Permission))
             {

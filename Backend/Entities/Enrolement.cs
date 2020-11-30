@@ -15,6 +15,6 @@ namespace Backend.Entities
         public Test Test { get; set; }
 
         public bool Completed { get; set; }
-        public ICollection<EnrolementAnswer> enrolementAnswers { get; set; }
+        public ICollection<EnrolementAnswer> EnrolementAnswers { get; set; }
     }
 }

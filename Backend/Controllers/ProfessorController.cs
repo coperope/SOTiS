@@ -1,5 +1,6 @@
 ﻿using Backend.CQRS.Commands;
 using Backend.CQRS.Processors;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -14,19 +15,20 @@ namespace Backend.Controllers
     {
         private readonly ICommandProcessor _commandProcessor;
         private readonly IQueryProcessor _queryProcessor;
+        private readonly IHttpContextAccessor _httpContext;
 
-
-        public ProfessorController(ICommandProcessor commandProcessor, IQueryProcessor queryProcessor)
+        public ProfessorController(ICommandProcessor commandProcessor, IQueryProcessor queryProcessor, IHttpContextAccessor context)
         {
             _commandProcessor = commandProcessor;
             _queryProcessor = queryProcessor;
+            _httpContext = context;
         }
 
         [HttpPost("{professor_id}/tests")]
         public async Task<IActionResult> MakeTest(String professor_id, MakeTestCommand makeTestCommand)
         {
             makeTestCommand.ProfessorId = int.Parse(professor_id);
-            var response = await _commandProcessor.Execute(makeTestCommand);
+            var response = await _commandProcessor.Execute(makeTestCommand, _httpContext);
             return Ok();
         }
 

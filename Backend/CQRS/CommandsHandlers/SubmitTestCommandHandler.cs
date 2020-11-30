@@ -16,37 +16,46 @@ namespace Backend.CQRS.CommandsHandlers
     {
         private IEnrolementRepository _enrolementRepository;
         private IEnrolementAnswerRepository _enrolementAnswerRepository;
+        private IQuestionRepository _questionRepository;
 
         private IMapper _mapper;
 
-        public SubmitTestCommandHandler(IEnrolementRepository enrolementRepository, IEnrolementAnswerRepository enrolementAnswerRepository, IMapper mapper)
+        public SubmitTestCommandHandler(IEnrolementRepository enrolementRepository, IEnrolementAnswerRepository enrolementAnswerRepository, IQuestionRepository qquestionRepository, IMapper mapper)
         {
             _enrolementRepository = enrolementRepository ?? throw new ArgumentNullException(nameof(enrolementRepository));
             _enrolementAnswerRepository = enrolementAnswerRepository ?? throw new ArgumentNullException(nameof(enrolementAnswerRepository));
+            _questionRepository = qquestionRepository ?? throw new ArgumentNullException(nameof(qquestionRepository));
+
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
         }
         public async Task<SubmitTestCommandResult> Handle(SubmitTestCommand request, CancellationToken cancellationToken)
         {
-            /* NOTICE:
-            *
-            * Basic functionality works
-            * Needs logic for skipped answers 
-            */
             Enrolement enr = new Enrolement();
             enr.StudentId = request.UserId.Value;
             enr.TestId = request.Test.TestId;
             enr.Completed = true;
             Enrolement enrolement = await _enrolementRepository.CreateEnrolement(enr);
 
+            
             foreach (SubmitTestQuestion q in request.Test.Questions)
             {
-                foreach (SubmitTestAnswer a in q.Answers)
+                if (q.Answers?.Count > 0)
+                {
+                    foreach (SubmitTestAnswer a in q.Answers)
+                    {
+                        EnrolementAnswer enrAnsw = new EnrolementAnswer();
+                        enrAnsw.EnrolementId = enrolement.EnrolementId;
+                        enrAnsw.QuestionId = q.QuestionId;
+                        enrAnsw.AnswerId = a.AnswerId;
+                        await _enrolementAnswerRepository.CreateEnrolementAnswer(enrAnsw);
+                    }
+                } else
                 {
                     EnrolementAnswer enrAnsw = new EnrolementAnswer();
                     enrAnsw.EnrolementId = enrolement.EnrolementId;
                     enrAnsw.QuestionId = q.QuestionId;
-                    enrAnsw.AnswerId = a.AnswerId;
-                    EnrolementAnswer answer = await _enrolementAnswerRepository.CreateEnrolementAnswer(enrAnsw);
+                    enrAnsw.Skipped = true;
+                    await _enrolementAnswerRepository.CreateEnrolementAnswer(enrAnsw);
                 }
             }
 

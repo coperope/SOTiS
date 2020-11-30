@@ -29,5 +29,20 @@ namespace Backend.Data.Repositories
             }
             return null;
         }
+
+        public async Task<Enrolement> GetByStudentIdAndTestId(int studentId, int testId)
+        {
+            return await _context.Enrolements
+                .FirstOrDefaultAsync(e => e.StudentId == studentId && e.TestId == testId);
+        }
+
+        public async Task<Enrolement> GetByStudentIdAndTestIdWithAnswrs(int studentId, int testId)
+        {
+            return await _context.Enrolements
+                .Where(e => e.StudentId == studentId && e.TestId == testId)
+                .Include(e => e.EnrolementAnswers)
+                .ThenInclude(ea => ea.Answer)
+                .FirstOrDefaultAsync();
+        }
     }
 }

@@ -2,6 +2,7 @@
 using Backend.CQRS.Processors;
 using Backend.CQRS.Queries;
 using Backend.Utils.CustomAttributes;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
@@ -16,17 +17,18 @@ namespace Backend.Controllers
     {
         private readonly ICommandProcessor _commandProcessor;
         private readonly IQueryProcessor _queryProcessor;
-
-        public UsersController(ICommandProcessor commandProcessor, IQueryProcessor queryProcessor)
+        private readonly IHttpContextAccessor _httpContext;
+        public UsersController(ICommandProcessor commandProcessor, IQueryProcessor queryProcessor, IHttpContextAccessor context)
         {
             _commandProcessor = commandProcessor;
             _queryProcessor = queryProcessor;
+            _httpContext = context;
         }
 
         [HttpPost("authenticate")]
         public async Task<IActionResult> Authenticate(AuthenticateQuery query)
         {
-            var response = await _queryProcessor.Execute(query);
+            var response = await _queryProcessor.Execute(query, _httpContext);
 
             if (response == null)
             {
@@ -39,7 +41,7 @@ namespace Backend.Controllers
         [HttpPost("register")]
         public async Task<IActionResult> Register(RegisterCommand command)
         {
-            var response = await _commandProcessor.Execute(command);
+            var response = await _commandProcessor.Execute(command, _httpContext);
 
             if (response == null)
             {
