@@ -39,9 +39,9 @@ namespace Backend.CQRS.CommandsHandlers
             
             foreach (SubmitTestQuestion q in request.Test.Questions)
             {
-                if (q.Answers?.Count > 0)
+                if (q.SelectedAnswers?.Count > 0)
                 {
-                    foreach (SubmitTestAnswer a in q.Answers)
+                    foreach (SubmitTestAnswer a in q.SelectedAnswers)
                     {
                         EnrolementAnswer enrAnsw = new EnrolementAnswer();
                         enrAnsw.EnrolementId = enrolement.EnrolementId;

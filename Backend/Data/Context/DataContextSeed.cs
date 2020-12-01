@@ -69,6 +69,18 @@ namespace Backend.Data.Context
                                         new Answer(){ Text = "Communism is an economic and political system in which a country's trade and industry are controlled by private owners for profit, rather than by the state.", Correct = false},
                                         new Answer(){ Text = "Communism is a social system in which the nobility holds lands from the Crown in exchange for military service, and vassals are in turn tenants of the nobles, while the peasants are obliged to live on their lord's land and give him homage, labour, and a share of the produce, notionally in exchange for military protection.", Correct = false}
                                     }
+                                },
+                                new Question()
+                                {
+                                    Text = "What is Communism?",
+                                    IsMultipleChoice = false,
+                                    Answers = new Collection<Answer>()
+                                    {
+                                        new Answer(){ Text = "Communism is the doctrine of the conditions of the liberation of the proletariat.", Correct = true},
+                                        new Answer(){ Text = "Communism is class in society which lives entirely from the sale of its labor and does not draw profit from any kind of capital.", Correct = false},
+                                        new Answer(){ Text = "Communism is an economic and political system in which a country's trade and industry are controlled by private owners for profit, rather than by the state.", Correct = false},
+                                        new Answer(){ Text = "Communism is a social system in which the nobility holds lands from the Crown in exchange for military service, and vassals are in turn tenants of the nobles, while the peasants are obliged to live on their lord's land and give him homage, labour, and a share of the produce, notionally in exchange for military protection.", Correct = false}
+                                    }
                                 }
                             }
                 },

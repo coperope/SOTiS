@@ -42,17 +42,29 @@ namespace Backend.CQRS.QueriesHandlers
 
                 foreach (EnrolementAnswer studentAnswer in enrolement.EnrolementAnswers)
                 {
+                    System.Diagnostics.Debug.WriteLine(studentAnswer.AnswerId);
                     var question = testView.Questions
-                        .Where(q => q.QuestionId == studentAnswer.QuestionId && !studentAnswer.Skipped)
+                        .Where(q => q.QuestionId == studentAnswer.QuestionId)
                         .FirstOrDefault();
-                    question.SelectedAnswers = new List<StudentGetOneTestQueryResult.Answer>();
-                    question.SelectedAnswers.Add(_mapper.Map(studentAnswer.Answer, new StudentGetOneTestQueryResult.Answer()));
-                    question.SelectedAnswers.ToList().ForEach(a => a.Text = "");
+                    if (question.SelectedAnswers == null)
+                    {
+                        question.SelectedAnswers = new List<StudentGetOneTestQueryResult.Answer>();
+                    }
+                    if (!studentAnswer.Skipped)
+                    {
+                        question.SelectedAnswers.Add(_mapper.Map(studentAnswer.Answer, new StudentGetOneTestQueryResult.Answer()));
+                        question.SelectedAnswers.ToList().ForEach(a => a.Text = "");
+                    }
                 }
             } else
             {
                 testView.Questions
-                    .ToList().ForEach(q => q.Answers.ToList().ForEach(a => a.Correct = false));
+                    .ToList()
+                    .ForEach(q => 
+                    { 
+                        q.SelectedAnswers = new List<StudentGetOneTestQueryResult.Answer>();
+                        q.Answers.ToList().ForEach(a => a.Correct = false);
+                    });
             }
 
             return new StudentGetOneTestQueryResult

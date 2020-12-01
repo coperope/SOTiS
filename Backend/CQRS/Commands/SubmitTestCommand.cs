@@ -27,7 +27,7 @@ namespace Backend.CQRS.Commands
     {
         public int QuestionId { get; set; }
 
-        public ICollection<SubmitTestAnswer> Answers { get; set; }
+        public ICollection<SubmitTestAnswer> SelectedAnswers { get; set; }
         public bool IsMultipleChoice { get; set; }
     }
 

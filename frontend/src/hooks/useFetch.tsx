@@ -34,7 +34,8 @@ const useFetch = (
   url?: string,
   method: string = "get",
   body?: any,
-  initialParams: object = {}) => {
+  initialParams: object = {},
+  ) => {
 
   const [data, setData] = useState<any>(null);
   const [params, setParams] = useState(initialParams);

@@ -31,7 +31,7 @@ namespace Backend.Controllers
         public async Task<IActionResult> SubmitTest(String student_id, String test_id, SubmitTestCommand submitTestCommand)
         {
             var result = await _commandProcessor.Execute(submitTestCommand, _httpContext);
-            return Ok();
+            return Ok(result);
         }
 
         [Authorize]
