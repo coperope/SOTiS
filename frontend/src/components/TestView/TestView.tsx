@@ -44,9 +44,8 @@ const TestView = () => {
   const [ test, setTest ] = useState<TestData>(data?.test);
 
   useEffect(() => {
-    executeFetch(BASE_URL + GET_SINGLE_TEST_STUDENT(getUser().id, testId), "get");
     setTest(data?.test);
-  }, []);
+  }, [data]);
   console.log(test);
 
   return (

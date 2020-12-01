@@ -12,13 +12,17 @@ const saveUser = (user: object) => {
 }
 
 const getUser = () => {
-  return JSON.parse(localStorage.getItem('user') ?? "");
+  let string = localStorage.getItem('user');
+  if (string){
+    return JSON.parse(string);
+  }
+  return null;
 }
 
 const getUserPermission = () => {
-  const temp: string = getUser() || '{}'; 
-  if (Object.keys(temp).length !== 0) {
-    return JSON.parse(temp).permission;
+  const user = getUser(); 
+  if (user) {
+    return user.permission;
   }
   return null;
 }
