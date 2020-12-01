@@ -5,6 +5,8 @@ import { HashRouter as Router, Route } from 'react-router-dom'
 
 import Login from './components/Login/Login.js'
 import ListTests from './components/ListTests/ListTests.tsx'
+import CreateTest from './components/CreateTest/CreateTest.js'
+
 import Register from './components/Register/Register.js'
 import Header from './components/Header/Header.js'
 import TestView from './components/TestView/TestView'
@@ -37,6 +39,11 @@ function App() {
         <Route exact path="/student/test/:testId" render={props => (
           <React.Fragment>
             <TestView></TestView>
+          </React.Fragment>
+        )} />
+        <Route exact path="/createTest" render={props => (
+          <React.Fragment>
+            <CreateTest></CreateTest>
           </React.Fragment>
         )} />
       </div>

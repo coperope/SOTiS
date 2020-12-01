@@ -46,17 +46,8 @@ const TestAccordion = (props: TestAccordionProps) => {
           <Button onClick= {() => history.push(`/student/test/${props.testId}`) } variant="contained" color="primary" className={classes.button}>
             Show results
           </Button>
-        //   <Link
-        //   component="button"
-        //   variant="body2"
-        //   onClick={() => {
-        //     console.info("I'm a button.");
-        //   }}
-        // >
-        //   Button Link
-        // </Link>
           :
-          <Button variant="contained" color="primary" className={classes.button}>
+          <Button onClick= {() => history.push(`/student/test/${props.testId}`) } variant="contained" color="primary" className={classes.button}>
             Enroll
           </Button>
         }

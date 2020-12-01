@@ -4,27 +4,27 @@ button{
 
 #register_form {
     min-width: 450px;
-    max-height: 540px;
+    max-height: 670px;
     width: 100%;
-    height: 95vh;
+    height: 160vh;
     background: #ffffff;
-    padding: 4em 4em 2em;
+    padding: 2em 2em 1em;
     max-width: 400px;
-    margin: 50px auto 0;
+    margin: 50px auto 20px;
     box-shadow: 0 0 1em #222;
     border-radius: 2px;
 }
 #register_h2 {
-    margin:0 0 50px 0;
-    padding:10px;
+    margin:0 0 40px 0;
+    padding:8px;
     text-align:center;
-    font-size:30px;
+    font-size:25px;
     color:darken(#e5e5e5, 50%);
     border-bottom:solid 1px #e5e5e5;
 }
 
 .register_p {
-    margin: 0 0 3em 0;
+    margin: 0 0 0.24em 0;
     position: relative;
 }
 .register_input {
@@ -35,11 +35,12 @@ button{
     margin:0;
 }
 .register_input[type="text"],
-.register_input[type="password"] {
+.register_input[type="password"],
+.register_input[type="email"]{
     background: #fff;
     border: 1px solid #dbdbdb;
-    font-size: 1.6em;
-    padding: .8em .5em;
+    font-size: 1.2em;
+    padding: .6em .3em;
     border-radius: 2px;
 }
 .register_input[type="text"]:focus,
@@ -60,13 +61,16 @@ button{
     color: #fff;
     cursor: pointer;
     display: block;
-    font-size: 2em;
-    line-height: 1.6em;
-    margin: 2em 0 0;
+    font-size: 1.3em;
+    line-height: 1.1em;
+    margin: 1.2em 0 1.5em;
     padding-bottom: 3em;
     outline: none;
     padding: .8em 0;
     text-shadow: 0 1px #64b5f6;
+}
+.register_p_submit {
+    margin-bottom: 1.5em;
 }
 .register_input[type="submit"]:hover {
     background: #1976d2;
