@@ -1,12 +1,16 @@
-import React, {useState, useEffect} from 'react';
+import React, { useState, useEffect } from 'react';
 import { Question, Answer } from '../CreateTest'
 import { useStyles } from './styles'
-import { Grid, Typography, Checkbox, FormControl, InputLabel, Input, Button } from '@material-ui/core';
+import DeleteIcon from '@material-ui/icons/Delete';
+import { Grid, Typography, Checkbox, FormControl, InputLabel, Input, Button, FormControlLabel, Box, IconButton } from '@material-ui/core';
+import NewAnswer from './NewAnswer/NewAnswer';
+
 
 interface QuestionProps extends Question {
   index: number,
   setQuestionText: any,
-  setQuestionIsMultiple: any
+  setQuestionIsMultiple: any,
+  remove: any
 }
 
 function NewQuestion(question: QuestionProps) {
@@ -20,70 +24,113 @@ function NewQuestion(question: QuestionProps) {
   const onChange = (e: any) => {
     question.setQuestionText(e.target.value, question.index);
   }
-
-  const addAnswer = (e: any) => {
-    setAnswers((answers) => {
-      return [...answers, { ...blankAnswer }];
-    });
+  const setIsMultipleChoice = (e: any) => {
+    question.setQuestionIsMultiple(e.target.checked, question.index);
   }
+
+  const removeQuestion = () => {
+    question.remove(question.index);
+  }
+
   useEffect(() => {
-    question?.Answers?.splice(0,question?.Answers?.length);
+    question?.Answers?.splice(0, question?.Answers?.length);
     question?.Answers?.push(...answers);
 
   }, [answers]);
 
-  return <div className={classes.root}>
-    <Grid container spacing={3}>
-      <Grid item xs={12} className={classes.titlePanel}>
-        <FormControl fullWidth>
-          <InputLabel htmlFor="Text"> Question {question.index + 1} text</InputLabel>
-          <Input name="Text" value={question.Text} onChange={(e) => onChange(e)} inputProps={{ 'aria-label': 'description' }} fullWidth={true} required={true} />
-        </FormControl>
-      </Grid>
-      <Grid container
-        xs={12}
-        direction="column"
-        justify="center"
-        alignItems="stretch" >
-        {answers.map((answer: Answer, index: number) => (
-          <Grid item xs={8} key={index} style={{ paddingTop: "2em", paddingBottom: "2em" }}>
-            answer
+  const setAnswerText = (text: string, index: number) => {
+    setAnswers([
+      ...answers.slice(0, index),
+      {
+        ...answers[index],
+        Text: text,
+      },
+      ...answers.slice(index + 1)
+    ]);
+  }
+  const setAnswerIsCorrect = (isCorrect: boolean, index: number) => {
+    setAnswers([
+      ...answers.slice(0, index),
+      {
+        ...answers[index],
+        Correct: isCorrect,
+      },
+      ...answers.slice(index + 1)
+    ]);
+  }
+  const removeAnswer = (index: number) => {
+    setAnswers([
+      ...answers.slice(0, index),
+      ...answers.slice(index + 1)]);
+  }
+  
+  return <div className={[classes.root, classes.questionPanel].join(' ')}>
+    <Box boxShadow={1}>
+      <Box boxShadow={1} className={classes.titlePanel} style={{ minWidth: "38.6em", maxWidth: "60em", margin: "0.2em 0 0.5em"}}>
+        <Grid container spacing={3} alignItems='center'
+          justify='center' >
+
+          <Grid item xs={8} style={{ padding: "0.5em"}}>
+
+            <FormControl fullWidth>
+              <InputLabel htmlFor="Text"> Question {question.index + 1} text</InputLabel>
+              <Input name="Text" value={question.Text} onChange={(e) => onChange(e)} inputProps={{ 'aria-label': 'description' }} fullWidth={true} required={true} />
+            </FormControl>
+
           </Grid>
-        ))}
-        <Grid item xs={12}>
-          <Button variant="outlined" color="primary" onClick={() => setAnswers([...answers, { ...blankAnswer }])}>
-            Add an answer
-          </Button>
-        </Grid>
-        {/* {question?.answers.map((answer: Answer) => (
-        <Grid container item
-          xs={12}
-          key={answer.answerId}
-          className={classes.answerPanel}
-          direction="row"
-          justify="flex-start"
-          alignItems="center"
-        >
-          <Grid item xs={1}>
-            <Checkbox
-              disabled={question?.completed}
-              checked={checked(answer.answerId)}
-              onChange={(e) => selectAnswer(e, answer.answerId)}
-              inputProps={{ 'aria-label': 'primary checkbox' }}
-              style={getCheckboxStyle(answer.answerId)}
+
+          <Grid item xs={2} style={{ padding: "0.5em"}}>
+            <FormControlLabel
+              control={
+                <Checkbox
+                  checked={question.isMultipleChoice}
+                  onChange={(e) => setIsMultipleChoice(e)}
+                  name="Correct"
+                  color="primary"
+                />
+              }
+              label="Multiple choice"
             />
           </Grid>
-          <Grid item xs={11}>
-            <Typography variant="h6" className={classes.answerText} onClick={(e) => selectAnswer(e, answer.answerId)}>
-              {answer.text}
-            </Typography>
+          <Grid item xs={1}>
+        <IconButton 
+          className={classes.button}
+          onClick={() => removeQuestion()}
+        >
+          <DeleteIcon />
+        </IconButton >
+      </Grid>
+        </Grid>
+      </Box>
+      <Grid container
+        direction="column"
+        justify="center"
+        alignItems="stretch"
+        style={{ paddingTop: "1.5em"}} >
+        <Grid item xs={12}>
+          {answers.map((answer: Answer, index: number) => (
+            <Grid item xs={11} key={index} style={{ paddingTop: "1em", paddingBottom: "1em", marginLeft: "0.5em", marginRight: "0.5em" }}>
+
+              <NewAnswer
+                Text={answer.Text}
+                Correct={answer.Correct}
+                index={index}
+                setAnswerText={setAnswerText}
+                setAnswerIsCorrect={setAnswerIsCorrect}
+                remove={removeAnswer}
+              ></NewAnswer>
+            </Grid>
+          ))}
+          <Grid item xs={12}>
+            <Button variant="outlined" color="primary" onClick={() => setAnswers([...answers, { ...blankAnswer }])} style={{ marginTop: "0.8em", marginBottom: "0.4em" }}>
+              Add an answer
+          </Button>
           </Grid>
         </Grid>
 
-      ))} */}
-
       </Grid>
-    </Grid>
+
+    </Box>
   </div >;
 }
 

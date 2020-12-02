@@ -11,9 +11,15 @@ const useStyles = makeStyles((theme: Theme) =>
       justify:"center",
       alignItems:"center"
     },
+    button: {
+      margin: theme.spacing(1),
+    },
     titlePanel: {
-      backgroundColor: "#64B5F6",
+      backgroundColor: "#c8d9ed",
       borderRadius: "2px"
+    },
+    questionPanel: {
+      backgroundColor: "#f0f8ff",
     },
     title: {
       flexGrow: 1,
@@ -25,8 +31,8 @@ const useStyles = makeStyles((theme: Theme) =>
       marginRight: "4em",
     },
     answerPanel: {
-      backgroundColor: "#CAD6DF",
-      padding: "0.35em",
+      backgroundColor: "#e1f1fd",
+      marginLeft: "2em"
     },
     answerText: {
       textAlign: "left",

@@ -25,6 +25,7 @@ import LocalLibraryIcon from '@material-ui/icons/LocalLibrary';
 import AssignmentIcon from '@material-ui/icons/Assignment';
 import SchoolIcon from '@material-ui/icons/School';
 import { Link } from 'react-router-dom'
+import ClickAwayListener from '@material-ui/core/ClickAwayListener';
 import { getUserPermission, getUser, logout } from '../../utils/authUtils';
 import { useHistory } from 'react-router';
 const drawerWidth = 240;
@@ -111,15 +112,17 @@ function Header() {
       </FormGroup> */}
       <AppBar position="static" classes={{ colorPrimary: classes.barColor }}>
         <Toolbar>
-          <IconButton
-            edge="start"
-            color="inherit"
-            aria-label="menu"
-            onClick={handleDrawerOpen}
-            className={clsx(classes.menuButton, open && classes.hide)}
-          >
-            <MenuIcon />
-          </IconButton>
+          <ClickAwayListener onClickAway={handleDrawerClose}>
+            <IconButton
+              edge="start"
+              color="inherit"
+              aria-label="menu"
+              onClick={handleDrawerOpen}
+              className={clsx(classes.menuButton)}
+            >
+              <MenuIcon />
+            </IconButton>
+          </ClickAwayListener>
           <Typography variant="h6" className={classes.title}>
             Examinator
           </Typography>
@@ -168,7 +171,9 @@ function Header() {
           )}
         </Toolbar>
       </AppBar>
+
       {getUser() &&
+
         <Drawer
           className={classes.drawer}
           variant="persistent"
@@ -217,7 +222,9 @@ function Header() {
             ))}
           </List>
         </Drawer>
+
       }
+
     </div>
   );
 }

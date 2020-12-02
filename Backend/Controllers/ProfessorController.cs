@@ -1,5 +1,6 @@
 ﻿using Backend.CQRS.Commands;
 using Backend.CQRS.Processors;
+using Backend.Utils.CustomAttributes;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
@@ -24,6 +25,7 @@ namespace Backend.Controllers
             _httpContext = context;
         }
 
+        [Authorize]
         [HttpPost("{professor_id}/tests")]
         public async Task<IActionResult> MakeTest(String professor_id, MakeTestCommand makeTestCommand)
         {
