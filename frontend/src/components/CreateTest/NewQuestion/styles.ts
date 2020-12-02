@@ -8,27 +8,32 @@ const useStyles = makeStyles((theme: Theme) =>
     },
     root: {
       flexGrow: 1,
-      marginTop: "2em",
-      marginBottom: "2em",
+      justify:"center",
+      alignItems:"center"
+    },
+    titlePanel: {
+      backgroundColor: "#64B5F6",
+      borderRadius: "2px"
     },
     title: {
       flexGrow: 1,
     },
-    description: {
+    question: {
       flexGrow: 1,
       marginTop: "2em",
       marginLeft: "4em", 
       marginRight: "4em",
     },
-    button: {
+    answerPanel: {
       backgroundColor: "#CAD6DF",
-      color: "#000",
-      "&:hover":{
-        backgroundColor: "#64B5F6",
-      },
-      width: "30%",
-      height: "3em"
-    }
+      padding: "0.35em",
+    },
+    answerText: {
+      textAlign: "left",
+      fontSize: theme.typography.pxToRem(17),
+      fontWeight: theme.typography.fontWeightRegular,
+      cursor: "pointer"
+    },
   }),
 );
 

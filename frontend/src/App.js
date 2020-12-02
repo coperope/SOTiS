@@ -5,7 +5,7 @@ import { HashRouter as Router, Route } from 'react-router-dom'
 
 import Login from './components/Login/Login.js'
 import ListTests from './components/ListTests/ListTests.tsx'
-import CreateTest from './components/CreateTest/CreateTest.js'
+import CreateTest from './components/CreateTest/CreateTest.tsx'
 
 import Register from './components/Register/Register.js'
 import Header from './components/Header/Header.js'

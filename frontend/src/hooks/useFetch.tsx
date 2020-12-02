@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { getToken } from '../utils/authUtils';
 
 const generateOptions =(
@@ -33,12 +33,10 @@ const generateOptions =(
 const useFetch = (
   url?: string,
   method: string = "get",
-  body?: any,
-  initialParams: object = {},
+  body?: any
   ) => {
 
   const [data, setData] = useState<any>(null);
-  const [params, setParams] = useState(initialParams);
   const [hasError, setHasError] = useState(false);
   const [errorMessage, setErrorMessage] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
