@@ -41,26 +41,26 @@ namespace Backend.Data.Context
         {
             return new List<Student>
             {
-                new Student() {Username = "revolution", FirstName = "Vladimir", LastName = "Iljic Lenjin", Password = "123456"  }
+                new Student() {Username = "student", FirstName = "Vladimir", LastName = "Iljic Lenjin", Password = "123456"  }
             };
         }
         private static IEnumerable<Professor> GetPreconfiguredProfessors()
         {
             return new List<Professor>
             {
-                new Professor() {Username = "kapital", FirstName = "Karl", LastName = "Marks", Password = "123456"  }
+                new Professor() {Username = "professor", FirstName = "Karl", LastName = "Marks", Password = "123456"  }
             };
         }
         private static IEnumerable<Test> GetPreconfiguredTests()
         {
             return new List<Test>
             {
-                new Test() {Title = "Communist manifesto", Description = "Let the ruling classes tremble at a Communistic revolution. The proletarians have nothing to lose but their chains. They have a world to win.",
+                new Test() {Title = "Manifesto", Description = "Let the ruling classes tremble at a Communistic revolution. The proletarians have nothing to lose but their chains. They have a world to win.",
                             Professor = new Professor() {Username = "manifesto", FirstName = "Friedrich", LastName = "Engels", Password = "123456"  },
                             Questions = new Collection<Question>(){
                                 new Question()
                                 {
-                                    Text = "What is Communism?",
+                                    Text = "What is Manifesto?",
                                     IsMultipleChoice = false,
                                     Answers = new Collection<Answer>()
                                     {

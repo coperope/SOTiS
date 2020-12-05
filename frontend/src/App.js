@@ -10,7 +10,7 @@ import CreateTest from './components/CreateTest/CreateTest.tsx'
 import Register from './components/Register/Register.js'
 import Header from './components/Header/Header.js'
 import TestView from './components/TestView/TestView'
-
+import TestGraph from './components/TestGraph/TestGraph.tsx'
 function App() {
   return (
     <Router basename="/">
@@ -44,6 +44,11 @@ function App() {
         <Route exact path="/createTest" render={props => (
           <React.Fragment>
             <CreateTest></CreateTest>
+          </React.Fragment>
+        )} />
+        <Route exact path="/graph" render={props => (
+          <React.Fragment>
+            <TestGraph></TestGraph>
           </React.Fragment>
         )} />
       </div>

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Question, Answer } from '../CreateTest'
 import { useStyles } from './styles'
 import DeleteIcon from '@material-ui/icons/Delete';
-import { Grid, Typography, Checkbox, FormControl, InputLabel, Input, Button, FormControlLabel, Box, IconButton } from '@material-ui/core';
+import { Grid, Checkbox, FormControl, InputLabel, Input, Button, FormControlLabel, Box, IconButton } from '@material-ui/core';
 import NewAnswer from './NewAnswer/NewAnswer';
 
 
@@ -29,6 +29,7 @@ function NewQuestion(question: QuestionProps) {
   }
 
   const removeQuestion = () => {
+    console.log(question.index)
     question.remove(question.index);
   }
 
@@ -63,23 +64,19 @@ function NewQuestion(question: QuestionProps) {
       ...answers.slice(0, index),
       ...answers.slice(index + 1)]);
   }
-  
+
   return <div className={[classes.root, classes.questionPanel].join(' ')}>
     <Box boxShadow={1}>
-      <Box boxShadow={1} className={classes.titlePanel} style={{ minWidth: "38.6em", maxWidth: "60em", margin: "0.2em 0 0.5em"}}>
+      <Box boxShadow={1} className={classes.titlePanel} style={{ minWidth: "38.6em", maxWidth: "60em", margin: "0.2em 0 0.5em" }}>
         <Grid container spacing={3} alignItems='center'
           justify='center' >
-
-          <Grid item xs={8} style={{ padding: "0.5em"}}>
-
+          <Grid item xs={8} style={{ padding: "0.5em" }}>
             <FormControl fullWidth>
               <InputLabel htmlFor="Text"> Question {question.index + 1} text</InputLabel>
               <Input name="Text" value={question.Text} onChange={(e) => onChange(e)} inputProps={{ 'aria-label': 'description' }} fullWidth={true} required={true} />
             </FormControl>
-
           </Grid>
-
-          <Grid item xs={2} style={{ padding: "0.5em"}}>
+          <Grid item xs={2} style={{ padding: "0.5em" }}>
             <FormControlLabel
               control={
                 <Checkbox
@@ -93,24 +90,20 @@ function NewQuestion(question: QuestionProps) {
             />
           </Grid>
           <Grid item xs={1}>
-        <IconButton 
-          className={classes.button}
-          onClick={() => removeQuestion()}
-        >
-          <DeleteIcon />
-        </IconButton >
-      </Grid>
+            <IconButton className={classes.button} onClick={() => removeQuestion()}>
+              <DeleteIcon />
+            </IconButton >
+          </Grid>
         </Grid>
       </Box>
       <Grid container
         direction="column"
         justify="center"
         alignItems="stretch"
-        style={{ paddingTop: "1.5em"}} >
+        style={{ paddingTop: "1.5em" }} >
         <Grid item xs={12}>
           {answers.map((answer: Answer, index: number) => (
             <Grid item xs={11} key={index} style={{ paddingTop: "1em", paddingBottom: "1em", marginLeft: "0.5em", marginRight: "0.5em" }}>
-
               <NewAnswer
                 Text={answer.Text}
                 Correct={answer.Correct}
@@ -124,12 +117,10 @@ function NewQuestion(question: QuestionProps) {
           <Grid item xs={12}>
             <Button variant="outlined" color="primary" onClick={() => setAnswers([...answers, { ...blankAnswer }])} style={{ marginTop: "0.8em", marginBottom: "0.4em" }}>
               Add an answer
-          </Button>
+            </Button>
           </Grid>
         </Grid>
-
       </Grid>
-
     </Box>
   </div >;
 }

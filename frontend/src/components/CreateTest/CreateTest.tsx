@@ -1,26 +1,16 @@
 import React, { useEffect, useState } from 'react';
 import { makeStyles } from '@material-ui/core/styles';
-import Input from '@material-ui/core/Input';
-import InputLabel from '@material-ui/core/InputLabel';
 import NewQuestion from './NewQuestion/NewQuestion';
 import { getUser, getToken } from '../../utils/authUtils';
 import { BASE_URL, CREATE_TEST_PREFIX, CREATE_TEST_POSTFIX } from '../../utils/apiUrls';
 import { useHistory } from 'react-router';
-import {
-  Typography,
-  Grid,
-  FormControl,
-  Divider,
-  Button,
-  Box
-} from '@material-ui/core';
+import { Typography, Grid, FormControl, Divider, Button, Box, Input, InputLabel  } from '@material-ui/core';
 
 const useStyles = makeStyles((theme) => ({
   root: {
     flexGrow: 1,
     marginTop: "2em",
     marginBottom: "2em",
-    
   },
   container: {
     border: "1"
@@ -62,6 +52,7 @@ function CreateTest() {
     Questions: Array<Question>(),
     ProfessorId: ''
   });
+
   const onChange = (e: any) => {
     setTest({
       ...test,
@@ -72,6 +63,7 @@ function CreateTest() {
   const addQuestion = (e: any) => {
     setQuestions([...questions, { ...blankQuestion }]);
   };
+
   const setQuestionText = (text: string, index: number) => {
     setQuestions([
       ...questions.slice(0, index),
@@ -100,10 +92,12 @@ function CreateTest() {
   }, [questions]);
 
   const removeQuestion = (index: number) => {
+    console.log(index)
     setQuestions([
       ...questions.slice(0, index),
       ...questions.slice(index + 1)]);
   }
+
   const onSubmit = (e: any) => {
     e.preventDefault();
     const token = getToken();
@@ -140,8 +134,7 @@ function CreateTest() {
 
 
   return <div className={classes.root}>
-    <Grid container spacing={3} alignItems='center'
-      justify='center'>
+    <Grid container spacing={3} alignItems='center' justify='center'>
       <Grid item xs={12}>
         <Typography variant="h4" className={classes.title}>
           Create a test
@@ -149,7 +142,6 @@ function CreateTest() {
       </Grid>
 
       <form className={classes.title} onSubmit={(e) => onSubmit(e)}  >
-
         <Grid container
           alignItems='center'
           justify='center'
@@ -161,7 +153,9 @@ function CreateTest() {
               <Input className={classes.titleTest} name="Title" value={test.Title} onChange={(e) => onChange(e)} inputProps={{ 'aria-label': 'description', style: { textAlign: 'center' } }} fullWidth={true} required={true} />
             </FormControl>
           </Grid>
+
           <Divider />
+
           <Grid item xs={7}>
             <Divider />
             <FormControl fullWidth>
@@ -172,6 +166,7 @@ function CreateTest() {
         </Grid>
 
         <Divider />
+
         <Grid container
           alignItems='center'
           justify='center'
@@ -204,22 +199,20 @@ function CreateTest() {
                   />
                 </Grid>
               ))}
+
               <Grid item xs={12}>
                 <Button variant="outlined" color="primary" onClick={(e) => addQuestion(e)} style={{ marginTop: "0.5em", marginBottom: "1em" }}>
                   Add a question
-            </Button>
+                </Button>
               </Grid>
             </Grid>
           </Box>
         </Grid>
-        <Button
-          type="submit" variant="contained" color="primary" style={{ marginTop: "2.5em", marginBottom: "1em" }}
-        >
+        <Button type="submit" variant="contained" color="primary" style={{ marginTop: "2.5em", marginBottom: "1em" }}>
           Sumbit
         </Button>
       </form>
     </Grid>
-
   </div>;
 }
 

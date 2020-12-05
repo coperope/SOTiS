@@ -81,10 +81,6 @@ function Header() {
   const handleDrawerClose = () => {
     setOpen(false);
   };
-  /*   const handleChange = (event) => {
-      setAuth(event.target.checked);
-    };
-   */
   const handleMenuProfile = (event) => {
     setanchorElProfile(event.currentTarget);
   };
@@ -104,12 +100,6 @@ function Header() {
 
   return (
     <div className={classes.root}>
-      {/*       <FormGroup>
-        <FormControlLabel
-          control={<Switch checked={auth} onChange={handleChange} aria-label="login switch" />}
-          label={auth ? 'Logout' : 'Login'}
-        />
-      </FormGroup> */}
       <AppBar position="static" classes={{ colorPrimary: classes.barColor }}>
         <Toolbar>
           <ClickAwayListener onClickAway={handleDrawerClose}>
