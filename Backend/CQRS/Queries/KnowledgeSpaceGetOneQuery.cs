@@ -10,7 +10,7 @@ namespace Backend.CQRS.Queries
 {
     public class KnowledgeSpaceGetOneQuery : IQuery, IRequest<KnowledgeSpaceGetOneQueryResult>
     {
-        public CQRSRole Permission { get; } = CQRSRole.All;
+        public CQRSRole Permission { get; } = CQRSRole.Professor;
         public int KnowledgeSpaceId { get; set; }
         public int? UserId { get; set; }
     }

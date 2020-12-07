@@ -59,7 +59,7 @@ namespace Backend.Controllers
             return Ok();
         }
 
-        
+        [Authorize]
         [HttpPost("{professor_id}/knowledge_space")]
         public async Task<IActionResult> CreateKnowledgeSpace(String professor_id, CreateKnowledgeSpaceCommand createKnowledgeSpace)
         {
@@ -68,7 +68,7 @@ namespace Backend.Controllers
             return Ok(response);
         }
 
-        
+        [Authorize]
         [HttpGet("{professor_id}/knowledge_space")]
         public async Task<IActionResult> GetAllKnowledgeSpaceOfProfessor(String professor_id)
         {
@@ -78,7 +78,7 @@ namespace Backend.Controllers
             return Ok(response);
         }
 
-        
+        [Authorize]
         [HttpGet("{professor_id}/knowledge_space/{knowledge_space_id}")]
         public async Task<IActionResult> GetOneKnowledgeSpace(String professor_id,String knowledge_space_id)
         {

@@ -11,7 +11,7 @@ namespace Backend.CQRS.Commands
 {
     public class CreateKnowledgeSpaceCommand : ICommand, IRequest<CreateKnowledgeSpaceCommandResult>
     {
-        public CQRSRole Permission { get; } = CQRSRole.All;
+        public CQRSRole Permission { get; } = CQRSRole.Professor;
 
         public int? UserId { get; set; }
         public int TestId { get; set; }
