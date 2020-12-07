@@ -16,8 +16,9 @@ namespace Backend.Data.Context
         public DbSet<Answer> Answers { get; set; }
         public DbSet<Enrolement> Enrolements { get; set; }
         public DbSet<EnrolementAnswer> EnrolementAnswers { get; set; }
-
-
+        public DbSet<KnowledgeSpace> KnowledgeSpaces { get; set; }
+        public DbSet<Edge> Edges { get; set; }
+        public DbSet<Problem> Problems { get; set; }
         public DataContext(DbContextOptions<DataContext> options) : base(options)
         {
         }

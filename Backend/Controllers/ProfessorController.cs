@@ -1,5 +1,6 @@
 ﻿using Backend.CQRS.Commands;
 using Backend.CQRS.Processors;
+using Backend.CQRS.Queries;
 using Backend.Utils.CustomAttributes;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -57,5 +58,36 @@ namespace Backend.Controllers
 
             return Ok();
         }
+
+        
+        [HttpPost("{professor_id}/knowledge_space")]
+        public async Task<IActionResult> CreateKnowledgeSpace(String professor_id, CreateKnowledgeSpaceCommand createKnowledgeSpace)
+        {
+            createKnowledgeSpace.ProfessorId = int.Parse(professor_id);
+            var response = await _commandProcessor.Execute(createKnowledgeSpace, _httpContext);
+            return Ok(response);
+        }
+
+        
+        [HttpGet("{professor_id}/knowledge_space")]
+        public async Task<IActionResult> GetAllKnowledgeSpaceOfProfessor(String professor_id)
+        {
+            KnowledgeSpaceGetAllQuery knowledgeSpaceGetAllQuery = new KnowledgeSpaceGetAllQuery();
+            knowledgeSpaceGetAllQuery.ProfessorId = int.Parse(professor_id);
+            var response = await _queryProcessor.Execute(knowledgeSpaceGetAllQuery, _httpContext);
+            return Ok(response);
+        }
+
+        
+        [HttpGet("{professor_id}/knowledge_space/{knowledge_space_id}")]
+        public async Task<IActionResult> GetOneKnowledgeSpace(String professor_id,String knowledge_space_id)
+        {
+            KnowledgeSpaceGetOneQuery knowledgeSpaceGetOneQuery = new KnowledgeSpaceGetOneQuery();
+            knowledgeSpaceGetOneQuery.KnowledgeSpaceId = int.Parse(knowledge_space_id);
+            var response = await _queryProcessor.Execute(knowledgeSpaceGetOneQuery, _httpContext);
+            return Ok(response);
+        }
+
     }
+
 }

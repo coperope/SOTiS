@@ -128,6 +128,9 @@ namespace Backend.Data.Context
             context.Answers.RemoveRange(context.Answers);
             context.Enrolements.RemoveRange(context.Enrolements);
             context.EnrolementAnswers.RemoveRange(context.EnrolementAnswers);
+            context.KnowledgeSpaces.RemoveRange(context.KnowledgeSpaces);
+            context.Problems.RemoveRange(context.Problems);
+            context.Edges.RemoveRange(context.Edges);
             context.SaveChanges();
 
             context.Database.ExecuteSqlRaw("DBCC CHECKIDENT('Students', RESEED, 0)");
@@ -137,6 +140,9 @@ namespace Backend.Data.Context
             context.Database.ExecuteSqlRaw("DBCC CHECKIDENT('Answers', RESEED, 0)");
             context.Database.ExecuteSqlRaw("DBCC CHECKIDENT('Enrolements', RESEED, 0)");
             context.Database.ExecuteSqlRaw("DBCC CHECKIDENT('EnrolementAnswers', RESEED, 0)");
+            context.Database.ExecuteSqlRaw("DBCC CHECKIDENT('KnowledgeSpaces', RESEED, 0)");
+            context.Database.ExecuteSqlRaw("DBCC CHECKIDENT('Problems', RESEED, 0)");
+            context.Database.ExecuteSqlRaw("DBCC CHECKIDENT('Edges', RESEED, 0)");
         }
     }
 }
