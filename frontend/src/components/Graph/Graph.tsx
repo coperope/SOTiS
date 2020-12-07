@@ -1,4 +1,6 @@
 import * as React from 'react';
+import { Tooltip, Button } from '@material-ui/core';
+import { Theme, createStyles, makeStyles } from '@material-ui/core/styles';
 
 import {
   GraphView,
@@ -18,8 +20,9 @@ import GraphConfig, {
   SPECIAL_EDGE_TYPE,
   SPECIAL_TYPE,
   SKINNY_TYPE,
-} from './graph-config'; 
-type IGraph = {
+} from './graph-config';
+
+export type IGraph = {
   nodes: INode[],
   edges: IEdge[],
 };
@@ -29,174 +32,178 @@ type IGraph = {
 // elsewhere in the App or be generated from some other state upstream of this component.
 const sample: IGraph = {
   edges: [
-    {
-      handleText: '5',
-      handleTooltipText: '5',
-      source: 'start1',
-      target: 'a1',
-      type: SPECIAL_EDGE_TYPE,
-    },
-    {
-      handleText: '5',
-      handleTooltipText: 'This edge connects Node A and Node B',
-      source: 'a1',
-      target: 'a2',
-      type: SPECIAL_EDGE_TYPE,
-    },
-    {
-      handleText: '54',
-      source: 'a2',
-      target: 'a4',
-      type: EMPTY_EDGE_TYPE,
-    },
-    {
-      handleText: '54',
-      source: 'a1',
-      target: 'a3',
-      type: EMPTY_EDGE_TYPE,
-    },
-    {
-      handleText: '54',
-      source: 'a3',
-      target: 'a4',
-      type: EMPTY_EDGE_TYPE,
-    },
-    {
-      handleText: '54',
-      source: 'a1',
-      target: 'a5',
-      type: EMPTY_EDGE_TYPE,
-    },
-    {
-      handleText: '54',
-      source: 'a4',
-      target: 'a1',
-      type: EMPTY_EDGE_TYPE,
-    },
-    {
-      handleText: '54',
-      source: 'a1',
-      target: 'a6',
-      type: EMPTY_EDGE_TYPE,
-    },
-    {
-      handleText: '24',
-      source: 'a1',
-      target: 'a7',
-      type: EMPTY_EDGE_TYPE,
-    },
+    // {
+    //   handleText: '5',
+    //   handleTooltipText: '5',
+    //   source: 'start1',
+    //   target: 'a1',
+    //   type: SPECIAL_EDGE_TYPE,
+    // },
+    // {
+    //   handleText: '5',
+    //   handleTooltipText: 'This edge connects Node A and Node B',
+    //   source: 'a1',
+    //   target: 'a2',
+    //   type: SPECIAL_EDGE_TYPE,
+    // },
+    // {
+    //   handleText: '54',
+    //   source: 'a2',
+    //   target: 'a4',
+    //   type: EMPTY_EDGE_TYPE,
+    // },
+    // {
+    //   handleText: '54',
+    //   source: 'a1',
+    //   target: 'a3',
+    //   type: EMPTY_EDGE_TYPE,
+    // },
+    // {
+    //   handleText: '54',
+    //   source: 'a3',
+    //   target: 'a4',
+    //   type: EMPTY_EDGE_TYPE,
+    // },
+    // {
+    //   handleText: '54',
+    //   source: 'a1',
+    //   target: 'a5',
+    //   type: EMPTY_EDGE_TYPE,
+    // },
+    // {
+    //   handleText: '54',
+    //   source: 'a4',
+    //   target: 'a1',
+    //   type: EMPTY_EDGE_TYPE,
+    // },
+    // {
+    //   handleText: '54',
+    //   source: 'a1',
+    //   target: 'a6',
+    //   type: EMPTY_EDGE_TYPE,
+    // },
+    // {
+    //   handleText: '24',
+    //   source: 'a1',
+    //   target: 'a7',
+    //   type: EMPTY_EDGE_TYPE,
+    // },
   ],
   nodes: [
-    {
-      id: 'start1',
-      title: 'Start (0)',
-      type: SPECIAL_TYPE,
-    },
-    {
-      id: 'a1',
-      title: 'Node A (1)',
-      type: SPECIAL_TYPE,
-      x: 258.3976135253906,
-      y: 331.9783248901367,
-    },
-    {
-      id: 'a2',
-      subtype: SPECIAL_CHILD_SUBTYPE,
-      title: 'Node B (2)',
-      type: EMPTY_TYPE,
-      x: 593.9393920898438,
-      y: 260.6060791015625,
-    },
-    {
-      id: 'a3',
-      title: 'Node C (3)',
-      type: EMPTY_TYPE,
-      x: 237.5757598876953,
-      y: 61.81818389892578,
-    },
-    {
-      id: 'a4',
-      title: 'Node D (4)',
-      type: EMPTY_TYPE,
-      x: 600.5757598876953,
-      y: 600.81818389892578,
-    },
-    {
-      id: 'a5',
-      title: 'Node E (5)',
-      type: undefined,
-      x: 50.5757598876953,
-      y: 500.81818389892578,
-    },
-    {
-      id: 'a6',
-      title: 'Node E (6)',
-      type: SKINNY_TYPE,
-      x: 300,
-      y: 600,
-    },
-    {
-      id: 'a7',
-      title: 'Node F (7)',
-      type: POLY_TYPE,
-      x: 0,
-      y: 300,
-    },
-    {
-      id: 'a8',
-      title: 'Node G (8)',
-      type: COMPLEX_CIRCLE_TYPE,
-      x: -200,
-      y: 400,
-    },
+    // {
+    //   id: 'start1',
+    //   title: 'Start (0)',
+    //   type: SPECIAL_TYPE,
+    // },
+    // {
+    //   id: 'a1',
+    //   title: 'Node A (1)',
+    //   type: SPECIAL_TYPE,
+    //   x: 258.3976135253906,
+    //   y: 331.9783248901367,
+    // },
+    // {
+    //   id: 'a2',
+    //   subtype: SPECIAL_CHILD_SUBTYPE,
+    //   title: 'Node B (2)',
+    //   type: EMPTY_TYPE,
+    //   x: 593.9393920898438,
+    //   y: 260.6060791015625,
+    // },
+    // {
+    //   id: 'a3',
+    //   title: 'Node C (3)',
+    //   type: EMPTY_TYPE,
+    //   x: 237.5757598876953,
+    //   y: 61.81818389892578,
+    // },
+    // {
+    //   id: 'a4',
+    //   title: 'Node D (4)',
+    //   type: EMPTY_TYPE,
+    //   x: 600.5757598876953,
+    //   y: 600.81818389892578,
+    // },
+    // {
+    //   id: 'a5',
+    //   title: 'Node E (5)',
+    //   type: undefined,
+    //   x: 50.5757598876953,
+    //   y: 500.81818389892578,
+    // },
+    // {
+    //   id: 'a6',
+    //   title: 'Node E (6)',
+    //   type: SKINNY_TYPE,
+    //   x: 300,
+    //   y: 600,
+    // },
+    // {
+    //   id: 'a7',
+    //   title: 'Node F (7)',
+    //   type: POLY_TYPE,
+    //   x: 0,
+    //   y: 300,
+    // },
+    // {
+    //   id: 'a8',
+    //   title: 'Node G (8)',
+    //   type: COMPLEX_CIRCLE_TYPE,
+    //   x: -200,
+    //   y: 400,
+    // },
   ],
 };
 
-function generateSample(totalNodes: any) {
-  const generatedSample: IGraph = {
-    edges: [],
-    nodes: [],
-  };
-  let y = 0;
-  let x = 0;
+// function generateSample(totalNodes: any) {
+//   const generatedSample: IGraph = {
+//     edges: [],
+//     nodes: [],
+//   };
+//   let y = 0;
+//   let x = 0;
 
-  const numNodes = totalNodes ? totalNodes : 0;
+//   const numNodes = totalNodes ? totalNodes : 0;
 
-  // generate large array of nodes
-  // These loops are fast enough. 1000 nodes = .45ms + .34ms
-  // 2000 nodes = .86ms + .68ms
-  // implying a linear relationship with number of nodes.
-  for (let i = 1; i <= numNodes; i++) {
-    if (i % 20 === 0) {
-      y++;
-      x = 0;
-    } else {
-      x++;
-    }
+//   // generate large array of nodes
+//   // These loops are fast enough. 1000 nodes = .45ms + .34ms
+//   // 2000 nodes = .86ms + .68ms
+//   // implying a linear relationship with number of nodes.
+//   for (let i = 1; i <= numNodes; i++) {
+//     if (i % 20 === 0) {
+//       y++;
+//       x = 0;
+//     } else {
+//       x++;
+//     }
 
-    generatedSample.nodes.push({
-      id: `a${i}`,
-      title: `Node ${i}`,
-      type: nodeTypes[Math.floor(nodeTypes.length * Math.random())],
-      x: 0 + 200 * x,
-      y: 0 + 200 * y,
-    });
-  }
-  // link each node to another node
-  for (let i = 1; i < numNodes; i++) {
-    generatedSample.edges.push({
-      source: `a${i}`,
-      target: `a${i + 1}`,
-      type: edgeTypes[Math.floor(edgeTypes.length * Math.random())],
-    });
-  }
+//     generatedSample.nodes.push({
+//       id: `a${i}`,
+//       title: `Node ${i}`,
+//       type: nodeTypes[Math.floor(nodeTypes.length * Math.random())],
+//       x: 0 + 200 * x,
+//       y: 0 + 200 * y,
+//     });
+//   }
+//   // link each node to another node
+//   for (let i = 1; i < numNodes; i++) {
+//     generatedSample.edges.push({
+//       source: `a${i}`,
+//       target: `a${i + 1}`,
+//       type: edgeTypes[Math.floor(edgeTypes.length * Math.random())],
+//     });
+//   }
 
-  return generatedSample;
-}
+//   return generatedSample;
+// }
 
-type IGraphProps = {};
 
-type IGraphState = {
+export type IGraphProps = {
+  graph: IGraph,
+  createKnowledgeSpace: (graph: IGraph) => void
+};
+
+export type IGraphState = {
   graph: any,
   selected: any,
   totalNodes: number,
@@ -204,7 +211,8 @@ type IGraphState = {
   layoutEngineType?: LayoutEngineType,
 };
 
-class TestGraph extends React.Component<IGraphProps, IGraphState> {
+
+export class Graph extends React.Component<IGraphProps, IGraphState> {
   GraphView: any;
 
   constructor(props: IGraphProps) {
@@ -212,14 +220,24 @@ class TestGraph extends React.Component<IGraphProps, IGraphState> {
 
     this.state = {
       copiedNode: null,
-      graph: sample,
+      graph: props.graph,
       layoutEngineType: 'None',
       selected: null,
-      totalNodes: sample.nodes.length,
+      totalNodes: props.graph.nodes.length,
     };
 
     this.GraphView = React.createRef();
   }
+
+  componentDidUpdate(prevProps: IGraphProps) {
+    if (prevProps !== this.props) {
+      this.setState({
+        graph: this.props.graph,
+        totalNodes: this.props.graph.nodes.length
+      });
+    }
+  }
+
 
   // Helper to find the index of a given node
   getNodeIndex(searchNode: INode | any) {
@@ -251,10 +269,10 @@ class TestGraph extends React.Component<IGraphProps, IGraphState> {
 
   makeItLarge = () => {
     const graph = this.state.graph;
-    const generatedSample = generateSample(this.state.totalNodes);
+    //const generatedSample = generateSample(this.state.totalNodes);
 
-    graph.nodes = generatedSample.nodes;
-    graph.edges = generatedSample.edges;
+    // graph.nodes = generatedSample.nodes;
+    // graph.edges = generatedSample.edges;
     this.setState(this.state);
   };
 
@@ -331,7 +349,7 @@ class TestGraph extends React.Component<IGraphProps, IGraphState> {
     // could be used here to determine node type
     // There is also support for subtypes. (see 'sample' above)
     // The subtype geometry will underlay the 'type' geometry for a node
-    const type = Math.random() < 0.25 ? SPECIAL_TYPE : EMPTY_TYPE;
+    const type = EMPTY_TYPE;
 
     const viewNode = {
       id: Date.now(),
@@ -471,6 +489,9 @@ class TestGraph extends React.Component<IGraphProps, IGraphState> {
     }
   };
 
+  createKnowledgeSpace = () => {
+    this.props.createKnowledgeSpace(this.state.graph);
+  }
   /*
    * Render
    */
@@ -481,8 +502,15 @@ class TestGraph extends React.Component<IGraphProps, IGraphState> {
     const { NodeTypes, NodeSubtypes, EdgeTypes } = GraphConfig;
 
     return (
-      <><div style={{height: '700px'}}>
-        <div className="graph-header">
+      <><div style={{ height: '700px' }}>
+        <Button onClick={() => this.createKnowledgeSpace()} variant="contained" color="primary" style={{
+          backgroundColor: "#CAD6DF",
+          color: "#000",
+          marginBottom: "1em",
+        }}>
+          Create Knowledge Space
+        </Button>
+        {/* <div className="graph-header">
           <button onClick={this.addStartNode}>Add Node</button>
           <button onClick={this.deleteStartNode}>Delete Node</button>
           <input
@@ -512,8 +540,8 @@ class TestGraph extends React.Component<IGraphProps, IGraphState> {
               ))}
             </select>
           </div>
-        </div>
-        <div id="graph" style={{ height: 'calc(100% - 87px)' }}>
+        </div> */}
+        <div id="graph" style={{ height: 'calc(100% - 10px)' }}>
           <GraphView
             ref={el => (this.GraphView = el)}
             nodeKey={NODE_KEY}
@@ -535,12 +563,30 @@ class TestGraph extends React.Component<IGraphProps, IGraphState> {
             onCopySelected={this.onCopySelected}
             onPasteSelected={this.onPasteSelected}
             layoutEngineType={this.state.layoutEngineType}
+            renderNodeText={data => {
+              return (
+                <foreignObject x='-100' y='-40' width='200' height='60'>
+                  <Tooltip title={<h4 style={{}}>{data.title}</h4>} placement='bottom' PopperProps={{
+                    popperOptions: {
+                      modifiers: {
+                        offset: {
+                          enabled: true,
+                          offset: '-40px, -40px',
+                        },
+                      },
+                    },
+                  }} >
+                    <div className='node'>
+                      <p className='job-title'>{data.title}</p>
+                    </div>
+                  </Tooltip>
+                </foreignObject>
+              )
+            }}
           />
         </div>
-        </div>
+      </div>
       </>
     );
   }
 }
-
-export default TestGraph;

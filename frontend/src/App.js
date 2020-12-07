@@ -10,7 +10,9 @@ import CreateTest from './components/CreateTest/CreateTest.tsx'
 import Register from './components/Register/Register.js'
 import Header from './components/Header/Header.js'
 import TestView from './components/TestView/TestView'
-import TestGraph from './components/TestGraph/TestGraph.tsx'
+import { CreateKnowledgeSpace } from './components/CreateKnowledgeSpace/CreateKnowledgeSpace'
+import ListKnowledgeSpaces from './components/ListKnowledgeSpaces/ListKnowledgeSpaces'
+
 function App() {
   return (
     <Router basename="/">
@@ -46,9 +48,19 @@ function App() {
             <CreateTest></CreateTest>
           </React.Fragment>
         )} />
-        <Route exact path="/graph" render={props => (
+        <Route exact path="/knowledge-space" render={props => (
           <React.Fragment>
-            <TestGraph></TestGraph>
+            <CreateKnowledgeSpace></CreateKnowledgeSpace>
+          </React.Fragment>
+        )} />
+        <Route exact path="/knowledge-space/:id" render={props => (
+          <React.Fragment>
+            <CreateKnowledgeSpace></CreateKnowledgeSpace>
+          </React.Fragment>
+        )} />
+        <Route exact path="/view-knowledge-spaces" render={props => (
+          <React.Fragment>
+            <ListKnowledgeSpaces></ListKnowledgeSpaces>
           </React.Fragment>
         )} />
       </div>

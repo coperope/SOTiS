@@ -24,6 +24,8 @@ import ListItemText from '@material-ui/core/ListItemText';
 import LocalLibraryIcon from '@material-ui/icons/LocalLibrary';
 import AssignmentIcon from '@material-ui/icons/Assignment';
 import SchoolIcon from '@material-ui/icons/School';
+import PlaylistAdd from '@material-ui/icons/PlaylistAdd';
+import BubbleChart from '@material-ui/icons/BubbleChart';
 import { Link } from 'react-router-dom'
 import ClickAwayListener from '@material-ui/core/ClickAwayListener';
 import { getUserPermission, getUser, logout } from '../../utils/authUtils';
@@ -192,7 +194,9 @@ function Header() {
               ))}
             </List>
           }
+          <Divider />
           {getUserPermission() === 1 &&
+          <>
             <List>
               {['Create test', 'All tests'].map((text, index) => (
                 <ListItem button key={text} component={Link} to={index % 2 === 0 ? '/createTest' : '/student/tests'}>
@@ -201,6 +205,16 @@ function Header() {
                 </ListItem>
               ))}
             </List>
+            <Divider />
+            <List>
+            {['Create Knowledge Space', 'My Knowledge Spaces'].map((text, index) => (
+              <ListItem button key={text} component={Link} to={index % 2 === 0 ? '/knowledge-space' : '/view-knowledge-spaces'}>
+                <ListItemIcon>{index % 2 === 0 ? <PlaylistAdd /> : <BubbleChart />}</ListItemIcon>
+                <ListItemText primary={text} />
+              </ListItem>
+            ))}
+          </List>
+          </>
           }
           <Divider />
           <List>

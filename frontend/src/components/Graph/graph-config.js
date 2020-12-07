@@ -18,8 +18,8 @@ export const nodeTypes = [EMPTY_TYPE, POLY_TYPE, SPECIAL_TYPE, SKINNY_TYPE];
 export const edgeTypes = [EMPTY_EDGE_TYPE, SPECIAL_EDGE_TYPE];
 
 const EmptyNodeShape = (
-  <symbol viewBox="0 0 154 154" width="154" height="154" id="emptyNode">
-    <circle cx="77" cy="77" r="76" />
+  <symbol viewBox="0 0 200 120" width="200" height="120" id="emptyNode">
+    <rect width="200" height="120" />
   </symbol>
 );
 
@@ -110,12 +110,10 @@ export default {
     emptyNode: {
       shape: EmptyNodeShape,
       shapeId: '#emptyNode',
-      typeText: 'None',
     },
     empty: {
       shape: CustomEmptyShape,
       shapeId: '#empty',
-      typeText: 'None',
     },
     special: {
       shape: SpecialShape,
