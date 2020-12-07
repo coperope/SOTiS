@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Backend.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20201122145301_InitialModelMigration")]
-    partial class InitialModelMigration
+    [Migration("20201207220906_fixEdge2Migration")]
+    partial class fixEdge2Migration
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -42,6 +42,33 @@ namespace Backend.Migrations
                     b.HasIndex("QuestionId");
 
                     b.ToTable("Answers");
+                });
+
+            modelBuilder.Entity("Backend.Entities.Edge", b =>
+                {
+                    b.Property<int>("EdgeId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .UseIdentityColumn();
+
+                    b.Property<int?>("KnowledgeSpaceId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("ProblemSourceId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("ProblemTargetId")
+                        .HasColumnType("int");
+
+                    b.HasKey("EdgeId");
+
+                    b.HasIndex("KnowledgeSpaceId");
+
+                    b.HasIndex("ProblemSourceId");
+
+                    b.HasIndex("ProblemTargetId");
+
+                    b.ToTable("Edges");
                 });
 
             modelBuilder.Entity("Backend.Entities.Enrolement", b =>
@@ -99,12 +126,66 @@ namespace Backend.Migrations
                     b.ToTable("EnrolementAnswers");
                 });
 
+            modelBuilder.Entity("Backend.Entities.KnowledgeSpace", b =>
+                {
+                    b.Property<int>("KnowledgeSpaceId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .UseIdentityColumn();
+
+                    b.Property<int?>("ProfessorId")
+                        .HasColumnType("int");
+
+                    b.Property<int?>("TestId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Title")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("KnowledgeSpaceId");
+
+                    b.HasIndex("ProfessorId");
+
+                    b.HasIndex("TestId");
+
+                    b.ToTable("KnowledgeSpaces");
+                });
+
+            modelBuilder.Entity("Backend.Entities.Problem", b =>
+                {
+                    b.Property<int>("ProblemId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int")
+                        .UseIdentityColumn();
+
+                    b.Property<int>("KnowledgeSpaceId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("Title")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<double>("X")
+                        .HasColumnType("float");
+
+                    b.Property<double>("Y")
+                        .HasColumnType("float");
+
+                    b.HasKey("ProblemId");
+
+                    b.HasIndex("KnowledgeSpaceId");
+
+                    b.ToTable("Problems");
+                });
+
             modelBuilder.Entity("Backend.Entities.Professor", b =>
                 {
                     b.Property<int>("ProfessorId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .UseIdentityColumn();
+
+                    b.Property<string>("Email")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("FirstName")
                         .HasColumnType("nvarchar(max)");
@@ -130,6 +211,9 @@ namespace Backend.Migrations
                         .HasColumnType("int")
                         .UseIdentityColumn();
 
+                    b.Property<bool>("IsMultipleChoice")
+                        .HasColumnType("bit");
+
                     b.Property<int>("TestId")
                         .HasColumnType("int");
 
@@ -149,6 +233,9 @@ namespace Backend.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int")
                         .UseIdentityColumn();
+
+                    b.Property<string>("Email")
+                        .HasColumnType("nvarchar(max)");
 
                     b.Property<string>("FirstName")
                         .HasColumnType("nvarchar(max)");
@@ -174,6 +261,9 @@ namespace Backend.Migrations
                         .HasColumnType("int")
                         .UseIdentityColumn();
 
+                    b.Property<string>("Description")
+                        .HasColumnType("nvarchar(max)");
+
                     b.Property<int>("ProfessorId")
                         .HasColumnType("int");
 
@@ -196,6 +286,25 @@ namespace Backend.Migrations
                         .IsRequired();
 
                     b.Navigation("Question");
+                });
+
+            modelBuilder.Entity("Backend.Entities.Edge", b =>
+                {
+                    b.HasOne("Backend.Entities.KnowledgeSpace", null)
+                        .WithMany("Edges")
+                        .HasForeignKey("KnowledgeSpaceId");
+
+                    b.HasOne("Backend.Entities.Problem", "ProblemSource")
+                        .WithMany()
+                        .HasForeignKey("ProblemSourceId");
+
+                    b.HasOne("Backend.Entities.Problem", "ProblemTarget")
+                        .WithMany()
+                        .HasForeignKey("ProblemTargetId");
+
+                    b.Navigation("ProblemSource");
+
+                    b.Navigation("ProblemTarget");
                 });
 
             modelBuilder.Entity("Backend.Entities.Enrolement", b =>
@@ -224,7 +333,7 @@ namespace Backend.Migrations
                         .HasForeignKey("AnswerId");
 
                     b.HasOne("Backend.Entities.Enrolement", "Enrolement")
-                        .WithMany()
+                        .WithMany("EnrolementAnswers")
                         .HasForeignKey("EnrolementId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
@@ -238,6 +347,30 @@ namespace Backend.Migrations
                     b.Navigation("Enrolement");
 
                     b.Navigation("Question");
+                });
+
+            modelBuilder.Entity("Backend.Entities.KnowledgeSpace", b =>
+                {
+                    b.HasOne("Backend.Entities.Professor", "Professor")
+                        .WithMany()
+                        .HasForeignKey("ProfessorId");
+
+                    b.HasOne("Backend.Entities.Test", "Test")
+                        .WithMany()
+                        .HasForeignKey("TestId");
+
+                    b.Navigation("Professor");
+
+                    b.Navigation("Test");
+                });
+
+            modelBuilder.Entity("Backend.Entities.Problem", b =>
+                {
+                    b.HasOne("Backend.Entities.KnowledgeSpace", null)
+                        .WithMany("Problems")
+                        .HasForeignKey("KnowledgeSpaceId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("Backend.Entities.Question", b =>
@@ -260,6 +393,18 @@ namespace Backend.Migrations
                         .IsRequired();
 
                     b.Navigation("Professor");
+                });
+
+            modelBuilder.Entity("Backend.Entities.Enrolement", b =>
+                {
+                    b.Navigation("EnrolementAnswers");
+                });
+
+            modelBuilder.Entity("Backend.Entities.KnowledgeSpace", b =>
+                {
+                    b.Navigation("Edges");
+
+                    b.Navigation("Problems");
                 });
 
             modelBuilder.Entity("Backend.Entities.Professor", b =>

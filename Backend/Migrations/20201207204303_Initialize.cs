@@ -2,33 +2,10 @@
 
 namespace Backend.Migrations
 {
-    public partial class InitialModelMigration : Migration
+    public partial class Initialize : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
-            migrationBuilder.RenameColumn(
-                name: "Name",
-                table: "Students",
-                newName: "Username");
-
-            migrationBuilder.AddColumn<string>(
-                name: "FirstName",
-                table: "Students",
-                type: "nvarchar(max)",
-                nullable: true);
-
-            migrationBuilder.AddColumn<string>(
-                name: "LastName",
-                table: "Students",
-                type: "nvarchar(max)",
-                nullable: true);
-
-            migrationBuilder.AddColumn<string>(
-                name: "Password",
-                table: "Students",
-                type: "nvarchar(max)",
-                nullable: true);
-
             migrationBuilder.CreateTable(
                 name: "Professors",
                 columns: table => new
@@ -38,11 +15,29 @@ namespace Backend.Migrations
                     Username = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     Password = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     FirstName = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    LastName = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                    LastName = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Email = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Professors", x => x.ProfessorId);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Students",
+                columns: table => new
+                {
+                    StudentId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Username = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Password = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    FirstName = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    LastName = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Email = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Students", x => x.StudentId);
                 });
 
             migrationBuilder.CreateTable(
@@ -52,7 +47,8 @@ namespace Backend.Migrations
                     TestId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Title = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    ProfessorId = table.Column<int>(type: "int", nullable: false)
+                    ProfessorId = table.Column<int>(type: "int", nullable: false),
+                    Description = table.Column<string>(type: "nvarchar(max)", nullable: true)
                 },
                 constraints: table =>
                 {
@@ -93,13 +89,41 @@ namespace Backend.Migrations
                 });
 
             migrationBuilder.CreateTable(
+                name: "KnowledgeSpaces",
+                columns: table => new
+                {
+                    KnowledgeSpaceId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    ProfessorId = table.Column<int>(type: "int", nullable: true),
+                    Title = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    TestId = table.Column<int>(type: "int", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_KnowledgeSpaces", x => x.KnowledgeSpaceId);
+                    table.ForeignKey(
+                        name: "FK_KnowledgeSpaces_Professors_ProfessorId",
+                        column: x => x.ProfessorId,
+                        principalTable: "Professors",
+                        principalColumn: "ProfessorId",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_KnowledgeSpaces_Tests_TestId",
+                        column: x => x.TestId,
+                        principalTable: "Tests",
+                        principalColumn: "TestId",
+                        onDelete: ReferentialAction.Restrict);
+                });
+
+            migrationBuilder.CreateTable(
                 name: "Questions",
                 columns: table => new
                 {
                     QuestionId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Text = table.Column<string>(type: "nvarchar(max)", nullable: true),
-                    TestId = table.Column<int>(type: "int", nullable: false)
+                    TestId = table.Column<int>(type: "int", nullable: false),
+                    IsMultipleChoice = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -110,6 +134,28 @@ namespace Backend.Migrations
                         principalTable: "Tests",
                         principalColumn: "TestId",
                         onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Problems",
+                columns: table => new
+                {
+                    ProblemId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    Title = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    X = table.Column<double>(type: "float", nullable: false),
+                    Y = table.Column<double>(type: "float", nullable: false),
+                    KnowledgeSpaceId = table.Column<int>(type: "int", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Problems", x => x.ProblemId);
+                    table.ForeignKey(
+                        name: "FK_Problems_KnowledgeSpaces_KnowledgeSpaceId",
+                        column: x => x.KnowledgeSpaceId,
+                        principalTable: "KnowledgeSpaces",
+                        principalColumn: "KnowledgeSpaceId",
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -131,6 +177,39 @@ namespace Backend.Migrations
                         principalTable: "Questions",
                         principalColumn: "QuestionId",
                         onDelete: ReferentialAction.Cascade);
+                });
+
+            migrationBuilder.CreateTable(
+                name: "Edges",
+                columns: table => new
+                {
+                    EdgeId = table.Column<int>(type: "int", nullable: false)
+                        .Annotation("SqlServer:Identity", "1, 1"),
+                    ProblemSourceId = table.Column<int>(type: "int", nullable: true),
+                    ProblemTargetId = table.Column<int>(type: "int", nullable: true),
+                    KnowledgeSpaceId = table.Column<int>(type: "int", nullable: true)
+                },
+                constraints: table =>
+                {
+                    table.PrimaryKey("PK_Edges", x => x.EdgeId);
+                    table.ForeignKey(
+                        name: "FK_Edges_KnowledgeSpaces_KnowledgeSpaceId",
+                        column: x => x.KnowledgeSpaceId,
+                        principalTable: "KnowledgeSpaces",
+                        principalColumn: "KnowledgeSpaceId",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Edges_Problems_ProblemSourceId",
+                        column: x => x.ProblemSourceId,
+                        principalTable: "Problems",
+                        principalColumn: "ProblemId",
+                        onDelete: ReferentialAction.Restrict);
+                    table.ForeignKey(
+                        name: "FK_Edges_Problems_ProblemTargetId",
+                        column: x => x.ProblemTargetId,
+                        principalTable: "Problems",
+                        principalColumn: "ProblemId",
+                        onDelete: ReferentialAction.Restrict);
                 });
 
             migrationBuilder.CreateTable(
@@ -173,6 +252,21 @@ namespace Backend.Migrations
                 column: "QuestionId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_Edges_KnowledgeSpaceId",
+                table: "Edges",
+                column: "KnowledgeSpaceId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Edges_ProblemSourceId",
+                table: "Edges",
+                column: "ProblemSourceId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Edges_ProblemTargetId",
+                table: "Edges",
+                column: "ProblemTargetId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_EnrolementAnswers_AnswerId",
                 table: "EnrolementAnswers",
                 column: "AnswerId");
@@ -198,6 +292,21 @@ namespace Backend.Migrations
                 column: "TestId");
 
             migrationBuilder.CreateIndex(
+                name: "IX_KnowledgeSpaces_ProfessorId",
+                table: "KnowledgeSpaces",
+                column: "ProfessorId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_KnowledgeSpaces_TestId",
+                table: "KnowledgeSpaces",
+                column: "TestId");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Problems_KnowledgeSpaceId",
+                table: "Problems",
+                column: "KnowledgeSpaceId");
+
+            migrationBuilder.CreateIndex(
                 name: "IX_Questions_TestId",
                 table: "Questions",
                 column: "TestId");
@@ -211,7 +320,13 @@ namespace Backend.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
+                name: "Edges");
+
+            migrationBuilder.DropTable(
                 name: "EnrolementAnswers");
+
+            migrationBuilder.DropTable(
+                name: "Problems");
 
             migrationBuilder.DropTable(
                 name: "Answers");
@@ -220,30 +335,19 @@ namespace Backend.Migrations
                 name: "Enrolements");
 
             migrationBuilder.DropTable(
+                name: "KnowledgeSpaces");
+
+            migrationBuilder.DropTable(
                 name: "Questions");
+
+            migrationBuilder.DropTable(
+                name: "Students");
 
             migrationBuilder.DropTable(
                 name: "Tests");
 
             migrationBuilder.DropTable(
                 name: "Professors");
-
-            migrationBuilder.DropColumn(
-                name: "FirstName",
-                table: "Students");
-
-            migrationBuilder.DropColumn(
-                name: "LastName",
-                table: "Students");
-
-            migrationBuilder.DropColumn(
-                name: "Password",
-                table: "Students");
-
-            migrationBuilder.RenameColumn(
-                name: "Username",
-                table: "Students",
-                newName: "Name");
         }
     }
 }
