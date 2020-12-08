@@ -37,6 +37,7 @@ namespace Backend.Data.Repositories
                 map.Add(problemID, savedProblem.Entity.ProblemId);
             }
             foreach (Edge edge in edges) {
+                edge.EdgeId = new int();
                 edge.KnowledgeSpaceId = result.Entity.KnowledgeSpaceId;
                 edge.ProblemSourceId = map[edge.ProblemSourceId.Value];
                 edge.ProblemTargetId = map[edge.ProblemTargetId.Value];

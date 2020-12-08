@@ -200,7 +200,8 @@ const sample: IGraph = {
 
 export type IGraphProps = {
   graph: IGraph,
-  createKnowledgeSpace: (graph: IGraph) => void
+  createKnowledgeSpace: (graph: IGraph) => void,
+  id: string,
 };
 
 export type IGraphState = {
@@ -500,16 +501,17 @@ export class Graph extends React.Component<IGraphProps, IGraphState> {
     const { nodes, edges } = this.state.graph;
     const selected = this.state.selected;
     const { NodeTypes, NodeSubtypes, EdgeTypes } = GraphConfig;
-
     return (
       <><div style={{ height: '700px' }}>
-        <Button onClick={() => this.createKnowledgeSpace()} variant="contained" color="primary" style={{
-          backgroundColor: "#CAD6DF",
-          color: "#000",
-          marginBottom: "1em",
-        }}>
-          Create Knowledge Space
-        </Button>
+        {!this.props.id &&
+          <Button onClick={() => this.createKnowledgeSpace()} variant="contained" color="primary" style={{
+            backgroundColor: "#CAD6DF",
+            color: "#000",
+            marginBottom: "1em",
+          }}>
+            Create Knowledge Space
+          </Button>
+        }
         {/* <div className="graph-header">
           <button onClick={this.addStartNode}>Add Node</button>
           <button onClick={this.deleteStartNode}>Delete Node</button>

@@ -22,10 +22,10 @@ namespace Backend.CQRS.CommandsHandlers
         {
             KnowledgeSpace knowledgeSpace = new KnowledgeSpace
             {
-                TestId = request.TestId,
+                TestId = null,
                 Problems = request.Problems,
                 Edges = request.Edges,
-                ProfessorId = request.ProfessorId,
+                ProfessorId = request.UserId,
                 Title = request.Title
             };
             var result = await _knowledgeSpaceRepository.CreateKnowledgeSpace(knowledgeSpace);

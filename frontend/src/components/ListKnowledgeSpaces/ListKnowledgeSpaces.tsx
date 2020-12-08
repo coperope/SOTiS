@@ -7,21 +7,21 @@ import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 
 import {
   BASE_URL,
-  GET_ALL_TESTS,
+  GET_PROFESSOR_KNOWLEDGE_SPACES,
 } from '../../utils/apiUrls';
 import useFetch from '../../hooks/useFetch';
 import { useStyles } from './styles'
-
+import { getUser } from '../../utils/authUtils';
 
 const ListKnowledgeSpaces = () => {
   const classes = useStyles();
-  const [tests, setTests] = useState([]);
-  const { data } = useFetch(BASE_URL + GET_ALL_TESTS, "get");
+  const [spaces, setSpaces] = useState([]);
+  const { data } = useFetch(BASE_URL + GET_PROFESSOR_KNOWLEDGE_SPACES(getUser().id), "get");
   const history = useHistory();
 
   useEffect(() => {
     if (data) {
-      setTests(data.tests);
+      setSpaces(data.knowledgeSpaces);
     }
   }, [data]);
 
@@ -42,8 +42,8 @@ const ListKnowledgeSpaces = () => {
           alignItems="center"
           style={{ paddingTop: "3em" }} >
 
-          {tests.map((test: any) => (
-            <Grid item xs={8} key={test.testId}>
+          {spaces.map((space: any) => (
+            <Grid item xs={8} key={space.knowledgeSpaceId}>
               <Accordion>
                 <AccordionSummary
                   expandIcon={<ExpandMoreIcon />}
@@ -51,7 +51,7 @@ const ListKnowledgeSpaces = () => {
                   id="panel1a-header"
                   className={classes.summary}
                 >
-                  <Typography className={classes.heading}>{test.title}</Typography>
+                  <Typography className={classes.heading}>{space.title}</Typography>
                 </AccordionSummary>
                 <AccordionDetails>
                   <Grid container spacing={1}>
@@ -63,7 +63,7 @@ const ListKnowledgeSpaces = () => {
                   </Grid>
                 </AccordionDetails>
                 <AccordionActions>
-                  <Button onClick={() => history.push(`/knowledge-space/${test.testId}`)} variant="contained" color="primary" className={classes.button}>
+                  <Button onClick={() => history.push(`/knowledge-space/${space.knowledgeSpaceId}`)} variant="contained" color="primary" className={classes.button}>
                     Show
                 </Button>
                 </AccordionActions>

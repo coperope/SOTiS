@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { useParams } from 'react-router-dom';
+import React, { useState, useEffect } from 'react';
+import { useParams, useHistory } from 'react-router-dom';
 import {
   IEdge,
   INode,
@@ -9,6 +9,52 @@ import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 
 import { Graph, IGraphProps, IGraph } from '../Graph/Graph'
 import { useStyles } from './styles'
+import {
+  BASE_URL,
+  CREATE_KNOWLEDGE_SPACE,
+  GET_ONE_KNOWLEDGE_SPACE,
+} from '../../utils/apiUrls';
+import { getToken } from '../../utils/authUtils';
+import { getUser } from '../../utils/authUtils';
+
+const submit = async (knowledgeSpace: KnowledgeSpace) => {
+  try {
+    const token = getToken();
+    const options = {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+      method: "post",
+      body: JSON.stringify(knowledgeSpace),
+    }
+    const response = await fetch(BASE_URL + CREATE_KNOWLEDGE_SPACE(getUser().id), options);
+    const result = await response.json();
+    return result;
+  } catch (error) {
+    return false;
+  }
+}
+
+const get = async (id: string) => {
+  try {
+    const token = getToken();
+    const options = {
+      headers: {
+        Authorization: `Bearer ${token}`,
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+      method: "get",
+    }
+    const response = await fetch(BASE_URL + GET_ONE_KNOWLEDGE_SPACE(getUser().id, id), options);
+    const result = await response.json();
+    return result;
+  } catch (error) {
+    return false;
+  }
+}
 
 interface ParamTypes {
   id: string
@@ -35,12 +81,38 @@ const initialKnowledgeSpace: KnowledgeSpace = {
 
 export const CreateKnowledgeSpace = () => {
   const classes = useStyles();
+  const history = useHistory();
   const { id } = useParams<ParamTypes>();
   const [graph, setGraph] = useState<IGraph>({ nodes: [], edges: [] });
   const [newNode, setNewNode] = useState<INode>(initialNode);
-  const [knowledgeSpace, setKnowledgeSpace] = useState<KnowledgeSpace>(initialKnowledgeSpace);
+  const [title, setTitle] = useState<string>("");
 
-  // TODO: get knowledge space
+  useEffect(() => {
+    async function fetch() {
+      const response = await get(id);
+      const knowledgeSpace = response.knowledgeSpace;
+      setGraph({
+        edges: knowledgeSpace.edges.map((e: any) => {
+          return {
+            ...e,
+            id: e.edgeId,
+            source: e.problemSourceId,
+            target: e.problemTargetId,
+          }
+        }),
+        nodes: knowledgeSpace.problems.map((p: any) => {
+          return {
+            ...p,
+            id: p.problemId,
+          }
+        }),
+      });
+      setTitle(knowledgeSpace.title);
+    }
+    if (id) {
+      fetch()
+    }
+  }, [id]);
 
   const createNode = () => {
     const node = { ...newNode };
@@ -63,23 +135,30 @@ export const CreateKnowledgeSpace = () => {
   }
 
   const onChangeTitle = (e: any) => {
-    setKnowledgeSpace(prev => {
-      return {
-        ...prev,
-        title: e.target.value
-      }
-    });
+    setTitle(e.target.value);
   }
 
-  const createKnowledgeSpace = (graph: IGraph) => {
-    setKnowledgeSpace(prev => {
+  const createKnowledgeSpace = async (graph: IGraph) => {
+    let toSubmit: KnowledgeSpace = { ...initialKnowledgeSpace, title: title }
+    toSubmit.edges = graph.edges.map(e => {
       return {
-        ...prev,
-        problems: graph.nodes,
-        edges: graph.edges,
+        edgeId: Math.floor(Math.random() * 1000),
+        problemSourceId: e.source,
+        problemTargetId: e.target
       }
     });
-    console.log(graph);
+    toSubmit.problems = graph.nodes.map(n => {
+      return {
+        ...n,
+        problemId: n.id,
+      }
+    });
+
+    console.log("knowledgeSpace", toSubmit);
+    const result = await submit(toSubmit);
+    if (result) {
+      history.push(`/knowledge-space/${result.id}`)
+    }
   }
 
   return (
@@ -91,40 +170,41 @@ export const CreateKnowledgeSpace = () => {
           </Typography>
           <FormControl fullWidth>
             <InputLabel htmlFor="Text"> Title </InputLabel>
-            <Input name="Text" value={knowledgeSpace.title} onChange={(e) => onChangeTitle(e)} inputProps={{ 'aria-label': 'description' }} fullWidth={true} required={true} />
+            <Input name="Text" value={title} onChange={(e) => onChangeTitle(e)} inputProps={{ 'aria-label': 'description' }} fullWidth={true} required={true} disabled={id != undefined} />
           </FormControl>
           <Grid item xs={12} style={{ textAlign: "center", paddingTop: "2em" }}>
-
-            <Accordion>
-              <AccordionSummary
-                expandIcon={<ExpandMoreIcon />}
-                aria-controls="panel1a-content"
-                id="panel1a-header"
-              >
-                <Typography>Add new problem</Typography>
-              </AccordionSummary>
-              <AccordionDetails>
-                <Grid container spacing={1}>
-                  <Grid item xs={12}>
-                    <FormControl fullWidth>
-                      <InputLabel htmlFor="Text"> Title </InputLabel>
-                      <Input name="Text" value={newNode.title} onChange={(e) => onChangeProblemTitle(e)} inputProps={{ 'aria-label': 'description' }} fullWidth={true} required={true} />
-                    </FormControl>
+            {!id &&
+              <Accordion>
+                <AccordionSummary
+                  expandIcon={<ExpandMoreIcon />}
+                  aria-controls="panel1a-content"
+                  id="panel1a-header"
+                >
+                  <Typography>Add new problem</Typography>
+                </AccordionSummary>
+                <AccordionDetails>
+                  <Grid container spacing={1}>
+                    <Grid item xs={12}>
+                      <FormControl fullWidth>
+                        <InputLabel htmlFor="Text"> Title </InputLabel>
+                        <Input name="Text" value={newNode.title} onChange={(e) => onChangeProblemTitle(e)} inputProps={{ 'aria-label': 'description' }} fullWidth={true} required={true} />
+                      </FormControl>
+                    </Grid>
                   </Grid>
-                </Grid>
-              </AccordionDetails>
-              <AccordionActions>
-                <Button onClick={() => createNode()} variant="contained" color="primary" className={classes.button}>
-                  Add
+                </AccordionDetails>
+                <AccordionActions>
+                  <Button onClick={() => createNode()} variant="contained" color="primary" className={classes.button}>
+                    Add
               </Button>
-              </AccordionActions>
-            </Accordion>
+                </AccordionActions>
+              </Accordion>
+            }
           </Grid>
 
         </Grid>
 
         <Grid item xs={10} style={{ textAlign: "center" }}>
-          <Graph graph={graph} createKnowledgeSpace={createKnowledgeSpace} ></Graph>
+          <Graph graph={graph} createKnowledgeSpace={createKnowledgeSpace} id={id}></Graph>
         </Grid>
 
         <Grid item xs={7} style={{ textAlign: "center", marginTop: "2.5em" }}>

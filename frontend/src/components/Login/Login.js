@@ -62,7 +62,11 @@ function Login() {
                 const {token, ...user} = data;
                 saveToken(token);
                 saveUser(user);
-                history.push("/student/tests");
+                if (user.permission === 0){
+                  history.push("/student/tests");
+                } else {
+                  history.push("/view-knowledge-spaces");
+                }
               }
             })
             .catch((error) => {
