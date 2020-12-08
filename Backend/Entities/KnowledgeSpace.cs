@@ -12,7 +12,6 @@ namespace Backend.Entities
         public Professor Professor { get; set; }
         public string Title { get; set; }
         public int? TestId { get; set; }
-        public Test Test { get; set; }
         public ICollection<Problem> Problems { get; set; }
         public ICollection<Edge> Edges { get; set; }
     }

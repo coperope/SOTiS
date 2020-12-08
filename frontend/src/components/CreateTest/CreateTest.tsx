@@ -98,13 +98,14 @@ function CreateTest() {
     
   }
   const handleProblemSelectedChange = (e: any) => {
-    console.log(e.target.value)
+    console.log('KS ID:' + test.KnowledgeSpaceId);
     setProblemSelected(e?.target.value);
     setBlankQuestion({
       ...blankQuestion,
       ProblemId: e?.target.value?.problemId,
       Problem: e?.target.value,
     });
+
   }
   const fetchData = async (url: string) => {
     try {
@@ -181,7 +182,8 @@ function CreateTest() {
         Title: test.Title,
         ProfessorId: getUser().id,
         Description: test.Description,
-        Questions: questions
+        Questions: questions,
+        KnowledgeSpaceId: test.KnowledgeSpaceId
       })
     }
     const url = process.env.NODE_ENV === 'production' ? CREATE_TEST_PREFIX : BASE_URL + CREATE_TEST_PREFIX + getUser().id + CREATE_TEST_POSTFIX;
