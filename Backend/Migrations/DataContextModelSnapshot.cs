@@ -144,6 +144,10 @@ namespace Backend.Migrations
 
                     b.HasIndex("ProfessorId");
 
+                    b.HasIndex("TestId")
+                        .IsUnique()
+                        .HasFilter("[TestId] IS NOT NULL");
+
                     b.ToTable("KnowledgeSpaces");
                 });
 
@@ -266,9 +270,6 @@ namespace Backend.Migrations
                     b.Property<int>("KnowledgeSpaceId")
                         .HasColumnType("int");
 
-                    b.Property<int?>("KnowledgeSpaceId1")
-                        .HasColumnType("int");
-
                     b.Property<int>("ProfessorId")
                         .HasColumnType("int");
 
@@ -276,8 +277,6 @@ namespace Backend.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("TestId");
-
-                    b.HasIndex("KnowledgeSpaceId1");
 
                     b.HasIndex("ProfessorId");
 
@@ -362,7 +361,13 @@ namespace Backend.Migrations
                         .WithMany()
                         .HasForeignKey("ProfessorId");
 
+                    b.HasOne("Backend.Entities.Test", "Test")
+                        .WithOne("KnowledgeSpace")
+                        .HasForeignKey("Backend.Entities.KnowledgeSpace", "TestId");
+
                     b.Navigation("Professor");
+
+                    b.Navigation("Test");
                 });
 
             modelBuilder.Entity("Backend.Entities.Problem", b =>
@@ -387,17 +392,11 @@ namespace Backend.Migrations
 
             modelBuilder.Entity("Backend.Entities.Test", b =>
                 {
-                    b.HasOne("Backend.Entities.KnowledgeSpace", "KnowledgeSpace")
-                        .WithMany()
-                        .HasForeignKey("KnowledgeSpaceId1");
-
                     b.HasOne("Backend.Entities.Professor", "Professor")
                         .WithMany("Tests")
                         .HasForeignKey("ProfessorId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("KnowledgeSpace");
 
                     b.Navigation("Professor");
                 });
@@ -432,6 +431,8 @@ namespace Backend.Migrations
             modelBuilder.Entity("Backend.Entities.Test", b =>
                 {
                     b.Navigation("Enrolements");
+
+                    b.Navigation("KnowledgeSpace");
 
                     b.Navigation("Questions");
                 });

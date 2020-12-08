@@ -65,7 +65,7 @@ function CreateTest() {
   const [knowledgeSpaceSelected, setKnowledgeSpaceSelected] = useState<any>({});
   const { data } = useFetch(BASE_URL + GET_ALL_KNOWLEDGE_SPACES(getUser().id), "get");
   const [questions, setQuestions] = useState<Array<Question>>(Array<Question>());
-  const [problemSelected, setProblemSelected] = useState<any>({});
+  const [problemSelected, setProblemSelected] = useState<any>("");
   const [blankQuestion, setBlankQuestion] = useState<any>({
     Text: '',
     isMultipleChoice: false,
@@ -194,7 +194,7 @@ function CreateTest() {
         }
         else {
           alert("Successfuly created test " + test.Title + ".");
-          history.push("/tests");
+          history.push("/view-knowledge-spaces");
           return response.json();
         }
       })
@@ -332,7 +332,7 @@ function CreateTest() {
               </Box>
             </Grid>
             <Button type="submit" variant="contained" color="primary" style={{ marginTop: "2.5em", marginBottom: "1em" }}>
-              Sumbit
+              Submit
         </Button>
           </form>
         </Grid>

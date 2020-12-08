@@ -10,8 +10,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Backend.Migrations
 {
     [DbContext(typeof(DataContext))]
-    [Migration("20201207204303_Initialize")]
-    partial class Initialize
+    [Migration("20201208211217_InitialCreate")]
+    partial class InitialCreate
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -146,7 +146,9 @@ namespace Backend.Migrations
 
                     b.HasIndex("ProfessorId");
 
-                    b.HasIndex("TestId");
+                    b.HasIndex("TestId")
+                        .IsUnique()
+                        .HasFilter("[TestId] IS NOT NULL");
 
                     b.ToTable("KnowledgeSpaces");
                 });
@@ -158,7 +160,7 @@ namespace Backend.Migrations
                         .HasColumnType("int")
                         .UseIdentityColumn();
 
-                    b.Property<int?>("KnowledgeSpaceId")
+                    b.Property<int>("KnowledgeSpaceId")
                         .HasColumnType("int");
 
                     b.Property<string>("Title")
@@ -214,6 +216,9 @@ namespace Backend.Migrations
                     b.Property<bool>("IsMultipleChoice")
                         .HasColumnType("bit");
 
+                    b.Property<int>("ProblemId")
+                        .HasColumnType("int");
+
                     b.Property<int>("TestId")
                         .HasColumnType("int");
 
@@ -263,6 +268,9 @@ namespace Backend.Migrations
 
                     b.Property<string>("Description")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("KnowledgeSpaceId")
+                        .HasColumnType("int");
 
                     b.Property<int>("ProfessorId")
                         .HasColumnType("int");
@@ -356,8 +364,8 @@ namespace Backend.Migrations
                         .HasForeignKey("ProfessorId");
 
                     b.HasOne("Backend.Entities.Test", "Test")
-                        .WithMany()
-                        .HasForeignKey("TestId");
+                        .WithOne("KnowledgeSpace")
+                        .HasForeignKey("Backend.Entities.KnowledgeSpace", "TestId");
 
                     b.Navigation("Professor");
 
@@ -368,7 +376,9 @@ namespace Backend.Migrations
                 {
                     b.HasOne("Backend.Entities.KnowledgeSpace", null)
                         .WithMany("Problems")
-                        .HasForeignKey("KnowledgeSpaceId");
+                        .HasForeignKey("KnowledgeSpaceId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
                 });
 
             modelBuilder.Entity("Backend.Entities.Question", b =>
@@ -423,6 +433,8 @@ namespace Backend.Migrations
             modelBuilder.Entity("Backend.Entities.Test", b =>
                 {
                     b.Navigation("Enrolements");
+
+                    b.Navigation("KnowledgeSpace");
 
                     b.Navigation("Questions");
                 });

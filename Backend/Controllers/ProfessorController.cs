@@ -32,7 +32,7 @@ namespace Backend.Controllers
         {
             makeTestCommand.ProfessorId = int.Parse(professor_id);
             var response = await _commandProcessor.Execute(makeTestCommand, _httpContext);
-            return Ok();
+            return Ok(response);
         }
 
         [HttpGet("{professor_id}/tests")]

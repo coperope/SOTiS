@@ -2,7 +2,7 @@
 
 namespace Backend.Migrations
 {
-    public partial class Initialize : Migration
+    public partial class InitialCreate : Migration
     {
         protected override void Up(MigrationBuilder migrationBuilder)
         {
@@ -48,7 +48,8 @@ namespace Backend.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Title = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     ProfessorId = table.Column<int>(type: "int", nullable: false),
-                    Description = table.Column<string>(type: "nvarchar(max)", nullable: true)
+                    Description = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    KnowledgeSpaceId = table.Column<int>(type: "int", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -123,6 +124,7 @@ namespace Backend.Migrations
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Text = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     TestId = table.Column<int>(type: "int", nullable: false),
+                    ProblemId = table.Column<int>(type: "int", nullable: false),
                     IsMultipleChoice = table.Column<bool>(type: "bit", nullable: false)
                 },
                 constraints: table =>
@@ -143,9 +145,9 @@ namespace Backend.Migrations
                     ProblemId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     Title = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    KnowledgeSpaceId = table.Column<int>(type: "int", nullable: false),
                     X = table.Column<double>(type: "float", nullable: false),
-                    Y = table.Column<double>(type: "float", nullable: false),
-                    KnowledgeSpaceId = table.Column<int>(type: "int", nullable: true)
+                    Y = table.Column<double>(type: "float", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -155,7 +157,7 @@ namespace Backend.Migrations
                         column: x => x.KnowledgeSpaceId,
                         principalTable: "KnowledgeSpaces",
                         principalColumn: "KnowledgeSpaceId",
-                        onDelete: ReferentialAction.Restrict);
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateTable(
@@ -299,7 +301,9 @@ namespace Backend.Migrations
             migrationBuilder.CreateIndex(
                 name: "IX_KnowledgeSpaces_TestId",
                 table: "KnowledgeSpaces",
-                column: "TestId");
+                column: "TestId",
+                unique: true,
+                filter: "[TestId] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Problems_KnowledgeSpaceId",

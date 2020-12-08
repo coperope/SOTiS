@@ -24,6 +24,10 @@ namespace Backend.Data.Repositories
             _context.SaveChanges();
             if (result != null)
             {
+                var ks = _context.KnowledgeSpaces.FirstOrDefault(ks => ks.KnowledgeSpaceId == test.KnowledgeSpaceId);
+                ks.TestId = result.Entity.TestId;
+                _context.KnowledgeSpaces.Update(ks);
+                _context.SaveChanges();
                 return result;
             }
             return null;
