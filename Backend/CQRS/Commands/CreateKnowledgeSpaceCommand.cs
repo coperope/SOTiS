@@ -14,7 +14,7 @@ namespace Backend.CQRS.Commands
         public CQRSRole Permission { get; } = CQRSRole.Professor;
 
         public int? UserId { get; set; }
-        public int TestId { get; set; }
+        public int? TestId { get; set; }
         public string Title { get; set; }
         public int ProfessorId { get; set; }
         public ICollection<Problem> Problems { get; set; }
