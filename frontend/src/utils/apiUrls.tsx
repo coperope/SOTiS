@@ -6,6 +6,9 @@ export const REGISTER = `/users/register`
 
 export const GET_ALL_TESTS = `/student/tests`
 
+export const GET_ALL_KNOWLEDGE_SPACES = (professor_id: string) => `/professor/${professor_id}/knowledge_space`
+export const GET_ONE_KNOWLEDGE_SPACE = (professor_id: string, knowledge_space_id: any) => `/professor/${professor_id}/knowledge_space/${knowledge_space_id}`
+
 export const CREATE_TEST_PREFIX = `/professor/`
 export const CREATE_TEST_POSTFIX = `/tests`
 

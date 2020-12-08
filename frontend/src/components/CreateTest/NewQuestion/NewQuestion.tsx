@@ -88,11 +88,15 @@ function NewQuestion(question: QuestionProps) {
               }
               label="Multiple choice"
             />
+            
           </Grid>
           <Grid item xs={1}>
             <IconButton className={classes.button} onClick={() => removeQuestion()}>
               <DeleteIcon />
             </IconButton >
+          </Grid>
+          <Grid item xs={8} >
+            <div className={classes.problemTitle}>Problem: {question?.Problem.title}</div>
           </Grid>
         </Grid>
       </Box>

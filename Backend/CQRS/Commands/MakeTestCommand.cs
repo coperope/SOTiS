@@ -20,6 +20,8 @@ namespace Backend.CQRS.Commands
         [Required]
         public int ProfessorId { get; set; }
         [Required]
+        public int KnowledgeSpaceId { get; set; }
+        [Required]
         public string Description { get; set; }
         [Required]
         public ICollection<Question> Questions { get; set; }

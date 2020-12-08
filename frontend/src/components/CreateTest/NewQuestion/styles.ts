@@ -40,6 +40,10 @@ const useStyles = makeStyles((theme: Theme) =>
       fontWeight: theme.typography.fontWeightRegular,
       cursor: "pointer"
     },
+    problemTitle: {
+      fontSize: theme.typography.pxToRem(13),
+      fontStyle: "lighter"
+    }
   }),
 );
 

@@ -28,7 +28,8 @@ namespace Backend.CQRS.CommandsHandlers
                 Title = request.Title,
                 Description = request.Description,
                 ProfessorId = request.ProfessorId,
-                Questions = request.Questions
+                Questions = request.Questions,
+                KnowledgeSpaceId = request.KnowledgeSpaceId
             };
             var result = await _testRepository.MakeTest(test);
             return new MakeTestCommandResult
