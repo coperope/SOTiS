@@ -489,7 +489,34 @@ export class Graph extends React.Component<IGraphProps, IGraphState> {
       this.GraphView.panToNode(event.target.value, true);
     }
   };
-
+  canCreateEdge = (startNode:  INode | undefined, endNode: INode | undefined) => {
+    if(endNode != undefined && startNode != undefined) {
+      var array = this.state.graph.edges.filter(function( obj: any ) {
+        return obj.source === endNode.id;
+      });
+      return this.isCycle(array, startNode.id, endNode.id);
+    }
+    return true;
+  }
+  isCycle = (array: any, startNodeId: any, endNodeId: any) => {
+    var filteredArray2 = array.filter(function( obj: any ) {
+      return obj.target === startNodeId;
+    });
+    if (filteredArray2.length != 0) {
+      return false;
+    }
+    var test = true;
+    array.forEach((element: any) => {
+      var filteredArray = this.state.graph.edges.filter(function( obj: any ) {
+        return obj.source === element.target;
+      });
+      test = this.isCycle(filteredArray, startNodeId, endNodeId);
+      if(test == false) {
+        return false;
+      }
+    });
+    return test;
+  }
   createKnowledgeSpace = () => {
     this.props.createKnowledgeSpace(this.state.graph);
   }
@@ -565,6 +592,7 @@ export class Graph extends React.Component<IGraphProps, IGraphState> {
             onCopySelected={this.onCopySelected}
             onPasteSelected={this.onPasteSelected}
             layoutEngineType={this.state.layoutEngineType}
+            canCreateEdge={this.canCreateEdge}
             renderNodeText={data => {
               return (
                 <foreignObject x='-100' y='-40' width='200' height='60'>
