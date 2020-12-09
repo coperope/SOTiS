@@ -10,6 +10,7 @@ interface QuestionProps extends Question {
   index: number,
   setQuestionText: any,
   setQuestionIsMultiple: any,
+  setQuestionAnswers: any,
   remove: any
 }
 
@@ -36,7 +37,7 @@ function NewQuestion(question: QuestionProps) {
   useEffect(() => {
     question?.Answers?.splice(0, question?.Answers?.length);
     question?.Answers?.push(...answers);
-
+    question.setQuestionAnswers(answers, question.index);
   }, [answers]);
 
   const setAnswerText = (text: string, index: number) => {

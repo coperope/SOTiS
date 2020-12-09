@@ -92,7 +92,9 @@ function CreateTest() {
       ...test,
       KnowledgeSpaceId: e?.target.value
     });
-    if(e?.target.value) {
+    console.log("Selected KS: ");
+    console.log(e?.target.value);
+    if(e?.target.value != undefined) {
       fetchKnowledgeSpace(e?.target.value);
     }
     
@@ -132,6 +134,8 @@ function CreateTest() {
     
     console.log(blankQuestion);
     setQuestions([...questions, { ...blankQuestion }]);
+    console.log("Current questions:");
+    console.log(questions);
   };
 
   const setQuestionText = (text: string, index: number) => {
@@ -140,6 +144,16 @@ function CreateTest() {
       {
         ...questions[index],
         Text: text,
+      },
+      ...questions.slice(index + 1)
+    ]);
+  }
+  const setQuestionAnswers = (answers: Array<Answer>, index: number) => {
+    setQuestions([
+      ...questions.slice(0, index),
+      {
+        ...questions[index],
+        Answers: answers,
       },
       ...questions.slice(index + 1)
     ]);
@@ -299,6 +313,7 @@ function CreateTest() {
                         index={index}
                         setQuestionText={setQuestionText}
                         setQuestionIsMultiple={setQuestionIsMultiple}
+                        setQuestionAnswers={setQuestionAnswers}
                         remove={removeQuestion}
                       />
                     </Grid>
