@@ -16,7 +16,8 @@ namespace Backend.Entities
         [ForeignKey("Test")]
         public int? TestId { get; set; }
         public Test Test { get; set; }
-
+        public bool IsReal { get; set; }
+        public int? ExpectedKnowledgeSpace { get; set; }
         public ICollection<Problem> Problems { get; set; }
         public ICollection<Edge> Edges { get; set; }
     }

@@ -56,6 +56,7 @@ namespace Backend.Data.Repositories
         {
             List<KnowledgeSpace> result = await _context.KnowledgeSpaces
                 .Where(t => t.ProfessorId == ProfessorId)
+                .Where(t => t.isReal == false)
                 .Include(t => t.Professor)
                 .ToListAsync();
             return result;
@@ -70,6 +71,18 @@ namespace Backend.Data.Repositories
                 .Include(t => t.Edges)
                     .ThenInclude(q => q.ProblemSource)
                 .FirstOrDefaultAsync();
+        }
+
+        public async Task<List<KnowledgeSpace>> GetAllRealKSOfOriginalKS(int id)
+        {
+            return await _context.KnowledgeSpaces
+                .Where(t => t.ExpectedKnowledgeSpace == id)
+                .Where(t => t.IsReal == true)
+                .Include(t => t.Professor)
+                .Include(t => t.Problems)
+                .Include(t => t.Edges)
+                    .ThenInclude(q => q.ProblemSource)
+                .ToListAsync();
         }
     }
 }

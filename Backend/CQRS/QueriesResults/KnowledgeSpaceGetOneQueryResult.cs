@@ -8,6 +8,6 @@ namespace Backend.CQRS.QueriesResults
 {
     public class KnowledgeSpaceGetOneQueryResult : IQueryResult
     {
-        public KnowledgeSpace KnowledgeSpace { get; set; }
+        public List<KnowledgeSpace> KnowledgeSpaces { get; set; }
     }
 }

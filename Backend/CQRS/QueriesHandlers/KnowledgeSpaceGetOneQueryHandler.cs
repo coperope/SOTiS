@@ -25,10 +25,12 @@ namespace Backend.CQRS.QueriesHandlers
         }
         public async Task<KnowledgeSpaceGetOneQueryResult> Handle(KnowledgeSpaceGetOneQuery request, CancellationToken cancellationToken)
         {
-            var result = await _knowledgeSpaceRepository.GetSingleKnowledgeSpaceByIdWidthIncludes(request.KnowledgeSpaceId);
+            var resultExpectedKS = await _knowledgeSpaceRepository.GetSingleKnowledgeSpaceByIdWidthIncludes(request.KnowledgeSpaceId);
+            var resultRealKSs = await _knowledgeSpaceRepository.GetAllRealKSOfOriginalKS(request.KnowledgeSpaceId);
+            resultRealKSs.Insert(0, resultExpectedKS);
             return new KnowledgeSpaceGetOneQueryResult
             {
-                KnowledgeSpace = result
+                KnowledgeSpaces = resultRealKSs
             };
         }
     }
