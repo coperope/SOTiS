@@ -41,7 +41,7 @@ namespace Backend
             services.AddDbContext<DataContext>(c =>
                 c.UseSqlServer(Configuration.GetConnectionString("SqlConnection")), ServiceLifetime.Scoped);
             services.AddHttpContextAccessor();
-
+            services.AddHttpClient();
             // Extension methods
             services.UseRepositories();
             services.UseAutoMapper();

@@ -88,6 +88,15 @@ namespace Backend.Controllers
             return Ok(response);
         }
 
+        [Authorize]
+        [HttpGet("{professor_id}/knowledge_space/{knowledge_space_id}/real")]
+        public async Task<IActionResult> createRealKnowledgeSpace(String professor_id, String knowledge_space_id)
+        {
+            CreateRealKSCommand createRealKSCommand = new CreateRealKSCommand();
+            createRealKSCommand.KnowledgeSpaceId = int.Parse(knowledge_space_id);
+            var response = _commandProcessor.Execute(createRealKSCommand, _httpContext);
+            return Ok(response);
+        }
     }
 
 }
