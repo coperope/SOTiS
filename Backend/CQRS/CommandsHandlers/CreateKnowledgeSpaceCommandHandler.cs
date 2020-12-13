@@ -1,4 +1,5 @@
-﻿using Backend.CQRS.Commands;
+﻿using AutoMapper;
+using Backend.CQRS.Commands;
 using Backend.CQRS.CommandsResults;
 using Backend.Data.Repositories.Interfaces;
 using Backend.Entities;
@@ -14,9 +15,11 @@ namespace Backend.CQRS.CommandsHandlers
     public class CreateKnowledgeSpaceCommandHandler : IRequestHandler<CreateKnowledgeSpaceCommand, CreateKnowledgeSpaceCommandResult>
     {
         private readonly IKnowledgeSpaceRepository _knowledgeSpaceRepository;
+        
         public CreateKnowledgeSpaceCommandHandler(IKnowledgeSpaceRepository knowledgeSpaceRepository)
         {
             _knowledgeSpaceRepository = knowledgeSpaceRepository;
+            
         }
         public async Task<CreateKnowledgeSpaceCommandResult> Handle(CreateKnowledgeSpaceCommand request, CancellationToken cancellationToken)
         {

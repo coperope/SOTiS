@@ -13,5 +13,8 @@ namespace Backend.Data.Repositories.Interfaces
         public Task<List<KnowledgeSpace>> GetKnowledgeSpacesOfProfessor(int ProfessorId);
         public Task<KnowledgeSpace> GetSingleKnowledgeSpaceByIdWidthIncludes(int id);
         public Task<List<KnowledgeSpace>> GetAllRealKSOfOriginalKS(int id);
+        public  void updateKnowledgeSpace(KnowledgeSpace knowledgeSpace);
+        public Task<Problem> addProblem(Problem problem);
+        public Task<Edge> addEdge(Edge edge);
     }
 }

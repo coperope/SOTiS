@@ -112,7 +112,7 @@ export const CreateKnowledgeSpace = () => {
   useEffect(() => {
     async function fetch() {
       const response = await get(id);
-      const knowledgeSpace = response.knowledgeSpaces.pop();
+      const knowledgeSpace = response.knowledgeSpaces.shift();
       setGraph({
         edges: knowledgeSpace.edges.map((e: any) => {
           return {
@@ -208,6 +208,9 @@ export const CreateKnowledgeSpace = () => {
 
   const createRealKs = async () => {
     const result = await createReal(id);
+    if (result) {
+      history.push(`/knowledge-space/${id}`)
+    }
   }
 
   return (

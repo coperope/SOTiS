@@ -84,5 +84,22 @@ namespace Backend.Data.Repositories
                     .ThenInclude(q => q.ProblemSource)
                 .ToListAsync();
         }
+        public async void updateKnowledgeSpace(KnowledgeSpace knowledgeSpace)
+        {
+            _context.KnowledgeSpaces.Update(knowledgeSpace);
+            _context.SaveChanges();
+        }
+        public async Task<Problem> addProblem(Problem problem) {
+            var retVal = await _context.Problems.AddAsync(problem);
+            _context.SaveChanges();
+            return retVal.Entity;
+        }
+
+        public async Task<Edge> addEdge(Edge edge)
+        {
+            var retVal = await _context.Edges.AddAsync(edge);
+            _context.SaveChanges();
+            return retVal.Entity;
+        }
     }
 }

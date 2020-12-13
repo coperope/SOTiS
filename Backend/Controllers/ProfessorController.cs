@@ -94,8 +94,8 @@ namespace Backend.Controllers
         {
             CreateRealKSCommand createRealKSCommand = new CreateRealKSCommand();
             createRealKSCommand.KnowledgeSpaceId = int.Parse(knowledge_space_id);
-            var response = _commandProcessor.Execute(createRealKSCommand, _httpContext);
-            return Ok(response);
+            var response = await _commandProcessor.Execute(createRealKSCommand, _httpContext);
+            return Ok();
         }
     }
 
