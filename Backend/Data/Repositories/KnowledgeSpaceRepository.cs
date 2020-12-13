@@ -56,7 +56,7 @@ namespace Backend.Data.Repositories
         {
             List<KnowledgeSpace> result = await _context.KnowledgeSpaces
                 .Where(t => t.ProfessorId == ProfessorId)
-                .Where(t => t.isReal == false)
+                .Where(t => t.IsReal == false)
                 .Include(t => t.Professor)
                 .ToListAsync();
             return result;
