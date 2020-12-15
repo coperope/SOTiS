@@ -208,9 +208,7 @@ export const CreateKnowledgeSpace = () => {
 
   const createRealKs = async () => {
     const result = await createReal(id);
-    if (result) {
-      history.push(`/knowledge-space/${id}`)
-    }
+    window.location.reload();
   }
 
   return (
