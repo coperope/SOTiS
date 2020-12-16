@@ -87,7 +87,8 @@ namespace Backend.CQRS.CommandsHandlers
                 Id = createdRealKS.KnowledgeSpaceId
             };
         }
-
+        // Next to procedures implement an algorithm fo DFS
+        // from each vertex. See: https://cs.stackexchange.com/a/29133 
         protected List<List<int>> removeTransitiveEdges(List<List<int>> edges)
         {
             List<List<int>> result = new List<List<int>>();
