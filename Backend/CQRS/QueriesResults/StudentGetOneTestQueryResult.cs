@@ -16,6 +16,7 @@ namespace Backend.CQRS.QueriesResults
             public string Description { get; set; }
             public Professor Professor { get; set; }
             public bool Completed { get; set; }
+            public int KnowledgeSpaceId { get; set; }
             public ICollection<Question> Questions { get; set; }
 
         }
@@ -36,6 +37,7 @@ namespace Backend.CQRS.QueriesResults
             public ICollection<Answer> Answers { get; set; }
             public ICollection<Answer> SelectedAnswers { get; set; }
 
+            public int ProblemId { get; set; }
             public bool IsMultipleChoice { get; set; }
         }
 

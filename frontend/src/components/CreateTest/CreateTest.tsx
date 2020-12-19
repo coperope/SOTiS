@@ -253,7 +253,7 @@ function CreateTest() {
               Create a test
             </Typography>
             <Typography variant="h5" className={classes.title}>
-              Selected knowledge space: {knowledgeSpaceSelected?.knowledgeSpace?.title && knowledgeSpaceSelected?.knowledgeSpace?.title}
+              Selected knowledge space: {knowledgeSpaceSelected?.knowledgeSpaces && knowledgeSpaceSelected?.knowledgeSpaces[0].title}
             </Typography>
           </Grid>
 
@@ -333,7 +333,7 @@ function CreateTest() {
                          <MenuItem value="">
                            <em>None</em>
                          </MenuItem>
-                         {knowledgeSpaceSelected?.knowledgeSpace?.problems.map((problem: any, index: number) => (
+                         {knowledgeSpaceSelected?.knowledgeSpaces && knowledgeSpaceSelected?.knowledgeSpaces[0]?.problems.map((problem: any, index: number) => (
                            <MenuItem key={index} value={problem}>{problem.title}</MenuItem>
                          ))}
                        </Select>

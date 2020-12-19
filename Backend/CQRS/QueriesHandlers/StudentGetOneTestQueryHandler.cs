@@ -17,13 +17,15 @@ namespace Backend.CQRS.QueriesHandlers
     {
         private ITestRepository _testRepository;
         private IEnrolementRepository _enrolementRepository;
+        private IKnowledgeSpaceRepository _knowledgeSpaceRepository;
 
         private IMapper _mapper;
 
-        public StudentGetOneTestQueryHandler(ITestRepository testRepository, IEnrolementRepository enrolementRepository, IMapper mapper)
+        public StudentGetOneTestQueryHandler(ITestRepository testRepository, IEnrolementRepository enrolementRepository, IKnowledgeSpaceRepository knowledgeSpaceRepository, IMapper mapper)
         {
             _testRepository = testRepository ?? throw new ArgumentNullException(nameof(testRepository));
             _enrolementRepository = enrolementRepository ?? throw new ArgumentNullException(nameof(enrolementRepository));
+            _knowledgeSpaceRepository = knowledgeSpaceRepository ?? throw new ArgumentNullException(nameof(knowledgeSpaceRepository));
 
             _mapper = mapper ?? throw new ArgumentNullException(nameof(mapper));
         }
@@ -67,11 +69,49 @@ namespace Backend.CQRS.QueriesHandlers
                     });
             }
 
+            var sorted = await SortQuestions(testView);
+            var isolated = testView.Questions.Where(q => !sorted.Contains(q)).ToList();
+            sorted.AddRange(isolated);
+
+            testView.Questions = sorted;
+
             return new StudentGetOneTestQueryResult
             {
                 Test = testView
             };
 
+        }
+
+        public async Task<List<StudentGetOneTestQueryResult.Question>> SortQuestions(StudentGetOneTestQueryResult.TestView test)
+        {
+            var knowledgeSpace = await _knowledgeSpaceRepository.GetSingleKnowledgeSpaceByIdWidthIncludes(test.KnowledgeSpaceId);
+            var edges = knowledgeSpace.Edges.ToList();
+            var sortedQuestions = new List<StudentGetOneTestQueryResult.Question>();
+
+            var leaves = edges.Where(edge => !edges.Any(e => e.ProblemSourceId == edge.ProblemTargetId)).Select(e => e.ProblemTargetId).Distinct().ToList();
+
+            TravereseGraph(leaves, edges, sortedQuestions, test);
+
+            return sortedQuestions;
+        }
+
+        public void TravereseGraph(List<int?> nodes, List<Edge> edges, List<StudentGetOneTestQueryResult.Question> questions, StudentGetOneTestQueryResult.TestView test)
+        {
+            foreach (var node in nodes)
+            {
+                var parents = edges.Where(e => e.ProblemTargetId == node).Select(e => e.ProblemSourceId).ToList();
+                if (!parents.Any())
+                {
+                    questions.Add(test.Questions.First(q => q.ProblemId == node));
+                    edges.RemoveAll(e => e.ProblemSourceId == node);
+                    continue;
+                }
+
+                TravereseGraph(parents, edges, questions, test);
+
+                questions.Add(test.Questions.First(q => q.ProblemId == node));
+                edges.RemoveAll(e => e.ProblemSourceId == node);
+            }
         }
     }
 }
