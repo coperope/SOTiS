@@ -24,15 +24,7 @@ namespace Backend.CQRS.CommandsHandlers
         public async Task<CreateKnowledgeSpaceCommandResult> Handle(CreateKnowledgeSpaceCommand request, CancellationToken cancellationToken)
         {
             List<List<int>> edgePairs = removeTransitiveEdges(request.Edges.Select(e => new List<int> { e.ProblemSourceId.Value, e.ProblemTargetId.Value }).ToList());
-            List<Edge> cleanedEdges = new List<Edge>();
-            foreach (var pair in edgePairs)
-            {
-                cleanedEdges.Add(new Edge()
-                {
-                    ProblemSourceId = pair[0],
-                    ProblemTargetId = pair[1]
-                });
-            }
+            List<Edge> cleanedEdges = edgePairs.Select(pair => new Edge() { ProblemSourceId = pair[0],  ProblemTargetId = pair[1] }).ToList();
             KnowledgeSpace knowledgeSpace = new KnowledgeSpace
             {
                 TestId = null,

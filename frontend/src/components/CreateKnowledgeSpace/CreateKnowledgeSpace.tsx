@@ -282,7 +282,7 @@ export const CreateKnowledgeSpace = () => {
     const result = await createReal(id);
     window.location.reload();
   }
-
+  let boxHeight = id ? "690px" : "755px";
   return (
     <div className={classes.root}>
       <Grid container spacing={1} justify={"center"} alignItems={"center"} style={{ paddingBottom: "2em" }}>
@@ -337,7 +337,7 @@ export const CreateKnowledgeSpace = () => {
           <Typography variant="h4" className={classes.title}>
             Expected knowledge Space
           </Typography>
-          <Box justifyContent="center" alignItems='center' border={1} boxShadow={3} style={{ minWidth: "80em", maxWidth: "100em", background: "#f0f8ff" }}>
+          <Box justifyContent="center" alignItems='center' border={1} boxShadow={3} style={{ minWidth: "80em", maxWidth: "100em", height: boxHeight, background: "#f0f8ff" }}>
             <Graph graph={graph} createKnowledgeSpace={createKnowledgeSpace} id={id}></Graph>
           </Box>
         </Grid>

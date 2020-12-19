@@ -102,14 +102,14 @@ namespace Backend.CQRS.QueriesHandlers
                 var parents = edges.Where(e => e.ProblemTargetId == node).Select(e => e.ProblemSourceId).ToList();
                 if (!parents.Any())
                 {
-                    questions.Add(test.Questions.First(q => q.ProblemId == node));
+                    questions.AddRange(test.Questions.Where(q => q.ProblemId == node).ToList());
                     edges.RemoveAll(e => e.ProblemSourceId == node);
                     continue;
                 }
 
                 TravereseGraph(parents, edges, questions, test);
 
-                questions.Add(test.Questions.First(q => q.ProblemId == node));
+                questions.AddRange(test.Questions.Where(q => q.ProblemId == node).ToList());
                 edges.RemoveAll(e => e.ProblemSourceId == node);
             }
         }

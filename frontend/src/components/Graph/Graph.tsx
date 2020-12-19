@@ -535,6 +535,7 @@ export class Graph extends React.Component<IGraphProps, IGraphState> {
             backgroundColor: "#CAD6DF",
             color: "#000",
             marginBottom: "1em",
+            marginTop: "1em",
           }}>
             Create Knowledge Space
           </Button>
