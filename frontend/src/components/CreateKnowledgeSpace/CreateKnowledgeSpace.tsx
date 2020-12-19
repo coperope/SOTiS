@@ -4,7 +4,7 @@ import {
   IEdge,
   INode,
 } from 'react-digraph';
-import { Accordion, AccordionSummary, AccordionDetails, AccordionActions, Typography, Button, Grid, InputLabel, FormControl, Input } from '@material-ui/core';
+import { Accordion, AccordionSummary, AccordionDetails, Box, AccordionActions, Divider, Typography, Button, Grid, InputLabel, FormControl, Input } from '@material-ui/core';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 
 import { Graph, IGraphProps, IGraph } from '../Graph/Graph'
@@ -17,6 +17,10 @@ import {
 } from '../../utils/apiUrls';
 import { getToken } from '../../utils/authUtils';
 import { getUser } from '../../utils/authUtils';
+import GraphConfig, {
+  EMPTY_EDGE_TYPE,
+  SPECIAL_EDGE_TYPE,
+} from '../Graph/graph-config';
 
 const submit = async (knowledgeSpace: KnowledgeSpace) => {
   try {
@@ -105,7 +109,7 @@ export const CreateKnowledgeSpace = () => {
   const { id } = useParams<ParamTypes>();
   const [graph, setGraph] = useState<IGraph>({ nodes: [], edges: [] });
   const [realGraphs, setRealGraphs] = useState<IGraph[]>([]);
-
+  const [graphCompare, setGraphCompare] = useState<IGraph>({ nodes: [], edges: [] })
   const [newNode, setNewNode] = useState<INode>(initialNode);
   const [title, setTitle] = useState<string>("");
 
@@ -130,7 +134,75 @@ export const CreateKnowledgeSpace = () => {
         }),
       });
       setTitle(knowledgeSpace.title);
-
+      let compareSpace: any[] = [];
+      for (let ks of response.knowledgeSpaces) {
+        let nodesMapped: any = ks.problems.map((p: any) => {
+          let matchingNode: any = knowledgeSpace.problems.filter((node: any) => p.x == node.x && p.y == node.y);
+          return {
+            ...matchingNode[0],
+            id: matchingNode[0].problemId,
+          }
+        });
+        let edgesMapped = ks.edges.map((e: any) => {
+          let problemSource: any = knowledgeSpace.problems.filter((p: any) => {
+            return p.x == e.problemSource.x && p.y == e.problemSource.y;
+          });
+          let problemTarget: any = knowledgeSpace.problems.filter((p: any) => {
+            return p.x == e.problemTarget.x && p.y == e.problemTarget.y;
+          });
+          return {
+            ...e,
+            id: e.edgeId,
+            source: problemSource[0].problemId,
+            target: problemTarget[0].problemId,
+            type: "specialEdge"
+          }
+        });
+        compareSpace.push(
+          {
+            edges: edgesMapped,
+            nodes: nodesMapped
+          }
+        );
+      }
+      if (compareSpace.length) {
+        let compareGraphEdgesGood: any = [];
+        let compareGraphEdgesBadReal: any = [];
+        let compareGraphEdgesBadExpected: any = [];
+        compareGraphEdgesGood = compareSpace[0].edges.filter((e: any) => {
+          if (knowledgeSpace.edges.filter((edge: any) => {
+            return edge.problemSourceId == e.source && edge.problemTargetId == e.target;
+          }).length == 0) {
+            compareGraphEdgesBadReal.push({
+              ...e,
+              source: e.source,
+              target: e.target,
+              type: "badRealEdge"
+            });
+          }
+          return knowledgeSpace.edges.filter((edge: any) => {
+            return edge.problemSourceId == e.source && edge.problemTargetId == e.target;
+          }).length;
+        });
+        knowledgeSpace.edges.filter((edge: any) => {
+          if (compareSpace[0].edges.filter((e: any) => {
+            return edge.problemSourceId == e.source && edge.problemTargetId == e.target;
+          }).length == 0) {
+            compareGraphEdgesBadExpected.push({
+              ...edge,
+              source: edge.problemSourceId,
+              target: edge.problemTargetId,
+              type: "badExpectedEdge"
+            });
+          };
+          return
+        });
+        compareSpace[0].edges = compareGraphEdgesGood.concat(compareGraphEdgesBadReal).concat(compareGraphEdgesBadExpected);
+        console.log("Real space mapped: ");
+      console.log(compareSpace[0]);
+      setGraphCompare(compareSpace[0]);
+      }
+      
       let realSpaces = [];
       for (let ks of response.knowledgeSpaces) {
         realSpaces.push(
@@ -261,16 +333,63 @@ export const CreateKnowledgeSpace = () => {
 
         </Grid>
 
-        <Grid item xs={10} style={{ textAlign: "center" }}>
-          <Graph graph={graph} createKnowledgeSpace={createKnowledgeSpace} id={id}></Graph>
+        <Grid item xs={10} style={{ textAlign: "center", marginTop: "2em" }}>
+          <Typography variant="h4" className={classes.title}>
+            Expected knowledge Space
+          </Typography>
+          <Box justifyContent="center" alignItems='center' border={1} boxShadow={3} style={{ minWidth: "80em", maxWidth: "100em", background: "#f0f8ff" }}>
+            <Graph graph={graph} createKnowledgeSpace={createKnowledgeSpace} id={id}></Graph>
+          </Box>
         </Grid>
-
+        <Divider />
         {realGraphs?.map((graph: IGraph, index: number) => (
-          <Grid item xs={10} key={index} style={{ textAlign: "center" }}>
-            <Typography>Real Knowledge Space</Typography>
-            <Graph graph={graph} createKnowledgeSpace={() => { }} id={id}></Graph>
+
+          <Grid item xs={10} key={index} style={{ textAlign: "center", marginTop: "2em" }}>
+            <Typography variant="h4" className={classes.title}>Real Knowledge Space</Typography>
+            <Box justifyContent="center" alignItems='center' border={1} boxShadow={3} style={{ minWidth: "80em", maxWidth: "100em", background: "#f0f8ff" }}>
+              <Graph graph={graph} createKnowledgeSpace={() => { }} id={id}></Graph>
+            </Box>
           </Grid>
         ))}
+        <Divider />
+        {graphCompare?.nodes?.length != 0 &&
+          <Grid item xs={10} key={1} style={{ textAlign: "center", marginTop: "2em" }}>
+            <Typography variant="h4" className={classes.title}>Compared expected vs real knowledge Space</Typography>
+            <Box justifyContent="center" alignItems='center' border={1} boxShadow={3} style={{ minWidth: "80em", maxWidth: "100em", background: "#f0f8ff" }}>
+              <Graph graph={graphCompare} createKnowledgeSpace={() => { }} id={id}></Graph>
+            </Box>
+            
+            <Typography variant="overline" align="left" style={{ textAlign: "left" }}>
+              <Grid container spacing={0} >
+                <Grid item xs={12} style={{ padding: "1em", paddingTop: "0.4em" }}>
+                  <Box border={1} style={{ maxWidth: "1em", maxHeight: "1em", minWidth: "1em", minHeight: "1em", background: "red" }}>
+                  </Box>These relations have been wrongly expected.
+                </Grid>
+              </Grid>
+            </Typography>
+
+            <Typography variant="overline" align="left">
+            <Grid container spacing={0} >
+                <Grid item xs={12} style={{ padding: "1em", paddingTop: "0.4em" }}>
+                  <Box border={1} style={{ maxWidth: "1em", maxHeight: "1em", minWidth: "1em", minHeight: "1em", background: "green" }}>
+                  </Box>These relations have been wrongly expected.
+
+                </Grid>
+              </Grid>
+          </Typography>
+            <Typography variant="overline" align="left">
+            <Grid container spacing={0} >
+                <Grid item xs={12} style={{ padding: "1em", paddingTop: "0.4em" }}>
+                  <Box border={1} style={{ maxWidth: "1em", maxHeight: "1em", minWidth: "1em", minHeight: "1em", background: "blue" }}>
+                  </Box>These relations have been wrongly expected.
+
+                </Grid>
+              </Grid>
+          </Typography>
+          </Grid>
+
+        }
+        <Divider />
         {!id &&
           <Grid item xs={7} style={{ textAlign: "center", marginTop: "2.5em" }}>
             <Typography variant="subtitle1" >

@@ -12,10 +12,12 @@ export const SKINNY_TYPE = 'skinny';
 export const SPECIAL_CHILD_SUBTYPE = 'specialChild';
 export const EMPTY_EDGE_TYPE = 'emptyEdge';
 export const SPECIAL_EDGE_TYPE = 'specialEdge';
+export const BAD_EXPECTED_EDGE_TYPE = 'badExpectedEdge'
+export const BAD_REAL_EDGE_TYPE = 'badRealEdge'
 export const COMPLEX_CIRCLE_TYPE = 'complexCircle';
 
 export const nodeTypes = [EMPTY_TYPE, POLY_TYPE, SPECIAL_TYPE, SKINNY_TYPE];
-export const edgeTypes = [EMPTY_EDGE_TYPE, SPECIAL_EDGE_TYPE];
+export const edgeTypes = [EMPTY_EDGE_TYPE, SPECIAL_EDGE_TYPE, BAD_EXPECTED_EDGE_TYPE, BAD_REAL_EDGE_TYPE];
 
 const EmptyNodeShape = (
   <symbol viewBox="0 0 200 120" width="200" height="120" id="emptyNode">
@@ -80,11 +82,35 @@ const SpecialEdgeShape = (
   <symbol viewBox="0 0 50 50" id="specialEdge">
     <rect
       transform="rotate(45)"
-      x="27.5"
-      y="-7.5"
-      width="15"
-      height="15"
-      fill="currentColor"
+      x="24.5"
+      y="-19"
+      width="30"
+      height="30"
+      fill="green"
+    />
+  </symbol>
+);
+const BadExpectedEdgeShape = (
+  <symbol viewBox="0 0 50 50" id="badExpectedEdge">
+    <rect
+      transform="rotate(45)"
+      x="24.5"
+      y="-19"
+      width="30"
+      height="30"
+      fill="red"
+    />
+  </symbol>
+);
+const BadRealEdgeShape = (
+  <symbol viewBox="0 0 50 50" id="badRealEdge">
+    <rect
+      transform="rotate(45)"
+      x="24.5"
+      y="-19"
+      width="30"
+      height="30"
+      fill="blue"
     />
   </symbol>
 );
@@ -99,6 +125,14 @@ export default {
       shape: SpecialEdgeShape,
       shapeId: '#specialEdge',
     },
+    badExpectedEdge: {
+      shape: BadExpectedEdgeShape,
+      shapeId: '#badExpectedEdge',
+    },
+    badRealEdge: {
+      shape: BadRealEdgeShape,
+      shapeId: '#badRealEdge',
+    }
   },
   NodeSubtypes: {
     specialChild: {
