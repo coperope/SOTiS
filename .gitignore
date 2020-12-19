@@ -2,6 +2,8 @@
 .eslintcache
 /.eslintcache
 ./eslintcache
+frontend/.eslintcache
+./frontend/.eslintcache
 # dependencies
 /node_modules
 /.pnp
