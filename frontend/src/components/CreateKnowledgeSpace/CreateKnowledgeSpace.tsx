@@ -86,7 +86,7 @@ interface ParamTypes {
 }
 
 const initialNode: INode = {
-  id: Math.floor(Math.random() * 1000),
+  id: Math.floor(Math.random() * 10000),
   title: '',
   x: 258,
   y: 258
@@ -113,6 +113,7 @@ export const CreateKnowledgeSpace = () => {
   const [graphCompare, setGraphCompare] = useState<IGraph>({ nodes: [], edges: [] })
   const [newNode, setNewNode] = useState<INode>(initialNode);
   const [title, setTitle] = useState<string>("");
+  const [levenshteinDistance, setLevenshteinDistance] = useState<number>(0);
 
   useEffect(() => {
     async function fetch() {
@@ -204,6 +205,7 @@ export const CreateKnowledgeSpace = () => {
         console.log("Real space mapped: ");
       console.log(compareSpace[0]);
       setGraphCompare(compareSpace[0]);
+      setLevenshteinDistance(compareGraphEdgesBadExpected.length + compareGraphEdgesBadReal.length);
       }
       
       let realSpaces = [];
@@ -283,9 +285,7 @@ export const CreateKnowledgeSpace = () => {
 
   const createRealKs = async () => {
     const result = await createReal(id);
-    console.log(result);
-    //window.location.reload();
-    console.log(result);
+    window.location.reload();
   }
   let boxHeight = id ? "690px" : "755px";
   return (
@@ -364,6 +364,14 @@ export const CreateKnowledgeSpace = () => {
               <Graph graph={graphCompare} createKnowledgeSpace={() => { }} id={id}></Graph>
             </Box>
             
+            <Typography variant="overline" align="left" style={{ textAlign: "left" }}>
+              <Grid container spacing={0} >
+                <Grid item xs={12} style={{ padding: "1em", paddingTop: "0.4em" }}>
+                  Graph edit distance between expected and real space: <b>{levenshteinDistance}</b>
+                </Grid>
+              </Grid>
+            </Typography>
+
             <Typography variant="overline" align="left" style={{ textAlign: "left" }}>
               <Grid container spacing={0} >
                 <Grid item xs={12} style={{ padding: "1em", paddingTop: "0.4em" }}>

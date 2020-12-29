@@ -45,7 +45,7 @@ namespace Backend.CQRS.QueriesHandlers
 
                 var choicesPart = new StringBuilder($"\t<qti-outcome-declaration identifier=\"SCORE\" cardinality=\"single\" base-type=\"float\"/>\n\t<qti-item-body>\n" +
                     $"\t\t<qti-choice-interaction response-identifier=\"RESPONSE\" shuffle=\"true\" max-choices=\"0\">\n" +
-                    $"\t\t\t<qti-prompt>${question.Text}</qti-prompt>");
+                    $"\t\t\t<qti-prompt>{question.Text}</qti-prompt>");
 
                 foreach (var answer in question.Answers)
                 {
