@@ -51,7 +51,10 @@ namespace Backend.Data.Repositories
             }
             return null;
         }
-
+        public Problem getProblemByTitle(string title)
+        {
+            return _context.Problems.Where(x => x.Title.Equals(title)).FirstOrDefault();
+        }
         public async Task<List<KnowledgeSpace>> GetKnowledgeSpacesOfProfessor(int ProfessorId)
         {
             List<KnowledgeSpace> result = await _context.KnowledgeSpaces
@@ -78,6 +81,17 @@ namespace Backend.Data.Repositories
             return await _context.KnowledgeSpaces
                 .Where(t => t.ExpectedKnowledgeSpace == id)
                 .Where(t => t.IsReal == true)
+                .Include(t => t.Professor)
+                .Include(t => t.Problems)
+                .Include(t => t.Edges)
+                    .ThenInclude(q => q.ProblemSource)
+                .ToListAsync();
+        }
+        public async Task<List<KnowledgeSpace>> GetAllPossibleKSOfRealKS(int id)
+        {
+            return await _context.KnowledgeSpaces
+                .Where(t => t.ExpectedKnowledgeSpace == id)
+                .Where(t => t.IsReal == false)
                 .Include(t => t.Professor)
                 .Include(t => t.Problems)
                 .Include(t => t.Edges)

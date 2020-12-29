@@ -74,6 +74,7 @@ const createReal = async (id: string) => {
     }
     const response = await fetch(BASE_URL + CREATE_REAL(getUser().id, id), options);
     const result = await response.json();
+    console.log(result);
     return result;
   } catch (error) {
     return false;
@@ -135,6 +136,7 @@ export const CreateKnowledgeSpace = () => {
       });
       setTitle(knowledgeSpace.title);
       let compareSpace: any[] = [];
+      
       for (let ks of response.knowledgeSpaces) {
         let nodesMapped: any = ks.problems.map((p: any) => {
           let matchingNode: any = knowledgeSpace.problems.filter((node: any) => p.x == node.x && p.y == node.y);
@@ -164,6 +166,7 @@ export const CreateKnowledgeSpace = () => {
             nodes: nodesMapped
           }
         );
+        break;
       }
       if (compareSpace.length) {
         let compareGraphEdgesGood: any = [];
@@ -280,7 +283,9 @@ export const CreateKnowledgeSpace = () => {
 
   const createRealKs = async () => {
     const result = await createReal(id);
-    window.location.reload();
+    console.log(result);
+    //window.location.reload();
+    console.log(result);
   }
   let boxHeight = id ? "690px" : "755px";
   return (
@@ -345,7 +350,7 @@ export const CreateKnowledgeSpace = () => {
         {realGraphs?.map((graph: IGraph, index: number) => (
 
           <Grid item xs={10} key={index} style={{ textAlign: "center", marginTop: "2em" }}>
-            <Typography variant="h4" className={classes.title}>Real Knowledge Space</Typography>
+            <Typography variant="h4" className={classes.title}>{index == 0 ? "Real Knowledge Space" : "All posible knowledge states"}</Typography>
             <Box justifyContent="center" alignItems='center' border={1} boxShadow={3} style={{ minWidth: "80em", maxWidth: "100em", background: "#f0f8ff" }}>
               <Graph graph={graph} createKnowledgeSpace={() => { }} id={id}></Graph>
             </Box>

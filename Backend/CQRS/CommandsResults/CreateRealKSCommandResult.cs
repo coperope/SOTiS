@@ -8,5 +8,7 @@ namespace Backend.CQRS.CommandsResults
     public class CreateRealKSCommandResult : ICommandResult
     {
         public int Id { get; set; }
+        public int[,] levenshteinMatrixReal { get; set; }
+        public int[,] levenshteinMatrixExpected { get; set; }
     }
 }
