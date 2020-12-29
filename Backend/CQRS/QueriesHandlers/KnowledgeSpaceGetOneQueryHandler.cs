@@ -2,6 +2,7 @@
 using Backend.CQRS.Queries;
 using Backend.CQRS.QueriesResults;
 using Backend.Data.Repositories.Interfaces;
+using Backend.Entities;
 using MediatR;
 using System;
 using System.Collections.Generic;
@@ -27,10 +28,17 @@ namespace Backend.CQRS.QueriesHandlers
         {
             var resultExpectedKS = await _knowledgeSpaceRepository.GetSingleKnowledgeSpaceByIdWidthIncludes(request.KnowledgeSpaceId);
             var resultRealKSs = await _knowledgeSpaceRepository.GetAllRealKSOfOriginalKS(request.KnowledgeSpaceId);
-            resultRealKSs.Insert(0, resultExpectedKS);
+            List<KnowledgeSpace> retVal = new List<KnowledgeSpace>();
+            retVal.AddRange(resultRealKSs);
+            foreach (var realKS in resultRealKSs)
+            {
+                var allStatesKS = await _knowledgeSpaceRepository.GetAllPossibleKSOfRealKS(realKS.KnowledgeSpaceId);
+                retVal.AddRange(allStatesKS);
+            }
+            retVal.Insert(0, resultExpectedKS);
             return new KnowledgeSpaceGetOneQueryResult
             {
-                KnowledgeSpaces = resultRealKSs
+                KnowledgeSpaces = retVal
             };
         }
     }

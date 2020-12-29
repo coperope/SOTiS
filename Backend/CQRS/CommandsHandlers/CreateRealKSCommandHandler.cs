@@ -30,11 +30,13 @@ namespace Backend.CQRS.CommandsHandlers
         {
             KnowledgeSpace expectedKnowledgeSpace = await _knowledgeSpaceRepository.GetSingleKnowledgeSpaceByIdWidthIncludes(request.KnowledgeSpaceId);
             List<string> problems = new List<string>();
+            
             List<Problem> sortedProblems = expectedKnowledgeSpace.Problems.ToList();
             sortedProblems = sortedProblems.OrderBy(x => x.ProblemId).ToList();
             foreach (Problem problem in sortedProblems)
             {
                 problems.Add(problem.ProblemId.ToString());
+                
             }
             KnowledgeSpace realKnowledgeSpace = new KnowledgeSpace
             {
@@ -57,11 +59,13 @@ namespace Backend.CQRS.CommandsHandlers
             dynamic rawEdgesArray = JsonConvert.DeserializeObject<dynamic>(a);
             var edgePairs = JsonConvert.DeserializeObject<List<List<int>>>(rawEdgesArray);
             edgePairs = removeTransitiveEdges(edgePairs);
+            
             var map = new Dictionary<int, int>();
+            var reverseMap = new Dictionary<int, int>();
             int i = 0;
+            List<int> problemIds = new List<int>();
             foreach (Problem problem in sortedProblems)
             {
-                int problemID = problem.ProblemId;
                 Problem newProblem = new Problem();
                 newProblem.ProblemId = new int();
                 newProblem.KnowledgeSpaceId = createdRealKS.KnowledgeSpaceId;
@@ -69,22 +73,39 @@ namespace Backend.CQRS.CommandsHandlers
                 newProblem.Y = problem.Y;
                 newProblem.Title = problem.Title;
                 var savedProblem = await _knowledgeSpaceRepository.addProblem(newProblem);
-                
-                map.Add(i++, savedProblem.ProblemId);
-            }
 
+                reverseMap.Add(problem.ProblemId, i);
+                map.Add(i++, savedProblem.ProblemId);
+                
+                problemIds.Add(savedProblem.ProblemId);
+            }
+            List<List<int>> edgePairsMapped = new List<List<int>>();
+            int[,] levenshteinMatrixReal = new int[problemIds.Count(), problemIds.Count()];
+            int[,] levenshteinMatrixExpected = new int[problemIds.Count(), problemIds.Count()];
             foreach (var pair in edgePairs)
             {
                 Edge edge = new Edge();
                 edge.ProblemSourceId = map[pair[0]];
                 edge.ProblemTargetId = map[pair[1]];
                 edge.KnowledgeSpaceId = createdRealKS.KnowledgeSpaceId;
+                List<int> edgeMapped = new List<int>();
+                edgeMapped.Add(map[pair[0]]);
+                edgeMapped.Add(map[pair[1]]);
+                edgePairsMapped.Add(edgeMapped);
                 var ret = await _knowledgeSpaceRepository.addEdge(edge);
+                levenshteinMatrixReal[pair[0], pair[1]] = 1;
+
             }
-            
+            foreach (var edge in expectedKnowledgeSpace.Edges.ToList())
+            {
+                levenshteinMatrixExpected[reverseMap[edge.ProblemSourceId.Value], reverseMap[edge.ProblemTargetId.Value]] = 1;
+            }
+            await findAllPossibleKnowledgeStates(edgePairsMapped, problemIds, realKnowledgeSpace.KnowledgeSpaceId);
             return new CreateRealKSCommandResult
             {
-                Id = createdRealKS.KnowledgeSpaceId
+                Id = createdRealKS.KnowledgeSpaceId,
+                levenshteinMatrixReal = levenshteinMatrixReal,
+                levenshteinMatrixExpected = levenshteinMatrixExpected
             };
         }
         // Next two procedures implement an algorithm for DFS
@@ -126,5 +147,84 @@ namespace Backend.CQRS.CommandsHandlers
             return false;
         }
 
+        protected async Task<KnowledgeSpace> findAllPossibleKnowledgeStates(List<List<int>> edges, List<int> allProblemIds, int knowledgeSpaceId)
+        {
+            Random rnd = new Random();
+            KnowledgeSpace ksWithAllStates = new KnowledgeSpace();
+            ksWithAllStates.Title = "All posible knowledge states for KS: " + knowledgeSpaceId.ToString();
+            ksWithAllStates.IsReal = false;
+            ksWithAllStates.Problems = new List<Problem>();
+            ksWithAllStates.Edges = new List<Edge>();
+            ksWithAllStates.ExpectedKnowledgeSpace = knowledgeSpaceId;
+            ksWithAllStates = await _knowledgeSpaceRepository.CreateKnowledgeSpace(ksWithAllStates);
+            Problem allStatesProblem = new Problem();
+            string headNodeTitle = string.Join(" ", allProblemIds);
+            allStatesProblem.Title = headNodeTitle;
+            allStatesProblem.KnowledgeSpaceId = ksWithAllStates.KnowledgeSpaceId;
+            allStatesProblem.X = 600;
+            allStatesProblem.Y = 180;
+            allStatesProblem = await _knowledgeSpaceRepository.addProblem(allStatesProblem);
+            ksWithAllStates.Problems.Add(allStatesProblem);
+            List<int> leaves = findLeavesAmongEdges(edges, allProblemIds);
+            int i = 0;
+            foreach (int leaf in leaves)
+            {
+                List<int> remainingNodes = allProblemIds.Select(id => id).ToList();
+                remainingNodes.Remove(leaf);
+                createSubPossibleKStates(ksWithAllStates, edges, remainingNodes, allStatesProblem, leaf, rnd, allProblemIds.Count(), i, leaves.Count());
+                i++;
+            }
+            return await _knowledgeSpaceRepository.GetSingleKnowledgeSpaceByIdWidthIncludes(ksWithAllStates.KnowledgeSpaceId);
+        }
+        protected async void createSubPossibleKStates(KnowledgeSpace ksWithAllStates, List<List<int>> edges, List<int> remainingPreviousNodes, Problem previousProblem, int previousLeaf, Random rnd, int leavesCount, int leaveIndex, int remainingLeavesCount)
+        {
+            List<List<int>> remainingEdges = edges.FindAll(x =>
+            {
+                return x[0] != previousLeaf && x[1] != previousLeaf;
+            });
+            string newNodeTitle = remainingPreviousNodes.Count() == 0 ? "EmptyNode" + ksWithAllStates.KnowledgeSpaceId : string.Join(" ", remainingPreviousNodes);
+            Problem someStateProblem = _knowledgeSpaceRepository.getProblemByTitle(newNodeTitle);
+            
+            if(someStateProblem == null)
+            {
+                someStateProblem = new Problem();
+                someStateProblem.Title = newNodeTitle;
+                someStateProblem.KnowledgeSpaceId = ksWithAllStates.KnowledgeSpaceId;
+                int multiplier = remainingLeavesCount == 1 ? 0 : ((leaveIndex + 1) / remainingLeavesCount < 0.5 ? (1 + leaveIndex - remainingLeavesCount) : (1 + leaveIndex - remainingLeavesCount / 2));
+                someStateProblem.X = 600 + multiplier * 180;
+                someStateProblem.Y = 180 + (leavesCount - remainingPreviousNodes.Count())*200;
+                someStateProblem = await _knowledgeSpaceRepository.addProblem(someStateProblem);
+                ksWithAllStates.Problems.Add(someStateProblem);
+            }
+            
+            Edge edge = new Edge();
+            edge.KnowledgeSpaceId = ksWithAllStates.KnowledgeSpaceId;
+            edge.ProblemSourceId = someStateProblem.ProblemId;
+            edge.ProblemTargetId = previousProblem.ProblemId;
+            edge = await _knowledgeSpaceRepository.addEdge(edge);
+            List<int> leaves = findLeavesAmongEdges(remainingEdges, remainingPreviousNodes);
+            int i = 0;
+            foreach (int leaf in leaves)
+            {
+                List<int> remainingNodes = remainingPreviousNodes.Select(id => id).ToList();
+                remainingNodes.Remove(leaf);
+                createSubPossibleKStates(ksWithAllStates, remainingEdges, remainingNodes, someStateProblem, leaf, rnd, leavesCount, i, leaves.Count());
+                i++;
+            }
+        }
+        protected List<int> findLeavesAmongEdges(List<List<int>> edges, List<int> nodes)
+        {
+            List<int> leavesIds = new List<int>();
+            foreach (var node in nodes)
+            {
+                List<List<int>> tempCopy = edges.FindAll(x => x[0] == node);
+                if (tempCopy.Count() == 0) 
+                {
+                    leavesIds.Add(node);
+                }
+            }
+            return leavesIds.Distinct().ToList();
+        }
+        
     }
 }
