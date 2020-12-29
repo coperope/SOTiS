@@ -33,7 +33,7 @@ function App() {
             <Register></Register>
           </React.Fragment>
         )} />
-        <Route exact path="/student/tests" render={props => (
+        <Route exact path="/tests" render={props => (
           <React.Fragment>
             <ListTests></ListTests>
           </React.Fragment>

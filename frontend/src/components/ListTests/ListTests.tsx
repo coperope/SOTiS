@@ -11,6 +11,7 @@ import {
 } from '../../utils/apiUrls';
 import useFetch from '../../hooks/useFetch';
 import TestAccordion from '../TestAccordion/TestAccordion';
+import { getUserPermission, getUser } from '../../utils/authUtils';
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -32,6 +33,9 @@ const ListTests = () => {
 
   useEffect(() => {
     if (data) {
+      if (getUserPermission() === 1) {
+        data.tests = data.tests.filter((t: any) => t.professor.professorId == getUser().id)
+      }
       setTests(data.tests);
     }
   }, [data]);
@@ -41,7 +45,7 @@ const ListTests = () => {
       <Grid container spacing={3}>
         <Grid item xs={12}>
           <Typography variant="h4" className={classes.title}>
-            All tests
+            {getUserPermission() === 1 ? "My tests" : "All tests"}
           </Typography>
         </Grid>
         <Grid container
@@ -58,6 +62,7 @@ const ListTests = () => {
                 description={test.description}
                 completed={test.completed}
                 professor={test.professor.firstName + " " + test.professor.lastName}
+                ksId={test.knowledgeSpaceId}
               />
             </Grid>
           ))}

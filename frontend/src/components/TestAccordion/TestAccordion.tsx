@@ -4,6 +4,7 @@ import { Accordion, AccordionSummary, AccordionDetails, AccordionActions, Typogr
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 
 import { useStyles } from './styles'
+import { getUser, getUserPermission } from '../../utils/authUtils';
 
 interface TestAccordionProps {
   testId: number,
@@ -11,6 +12,7 @@ interface TestAccordionProps {
   description: string,
   completed: string,
   professor: string,
+  ksId: number,
 }
 
 const TestAccordion = (props: TestAccordionProps) => {
@@ -42,14 +44,21 @@ const TestAccordion = (props: TestAccordionProps) => {
         </Grid>
       </AccordionDetails>
       <AccordionActions>
-        {props.completed ?
-          <Button onClick= {() => history.push(`/student/test/${props.testId}`) } variant="contained" color="primary" className={classes.button}>
-            Show results
+        {getUserPermission() === 0 &&
+          <Button onClick={() => history.push(`/student/test/${props.testId}`)} variant="contained" color="primary" className={classes.button}>
+            {props.completed ? "Show results" : "Enroll"}
           </Button>
-          :
-          <Button onClick= {() => history.push(`/student/test/${props.testId}`) } variant="contained" color="primary" className={classes.button}>
-            Enroll
-          </Button>
+        }
+
+        {getUserPermission() === 1 &&
+          <>
+            <Button onClick={() => history.push(`/knowledge-space/${props.ksId}`)} variant="contained" color="primary" className={classes.button}>
+              Show knowledge space
+            </Button>
+            <Button onClick={() => window.open(`http://localhost:5000/professor/${getUser().id}/tests/${props.testId}/qti`, "_blank")} variant="contained" color="primary" className={classes.button}>
+              Export QTI
+            </Button>
+          </>
         }
 
       </AccordionActions>

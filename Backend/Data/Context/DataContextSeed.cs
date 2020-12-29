@@ -56,7 +56,7 @@ namespace Backend.Data.Context
             return new List<Test>
             {
                 new Test() {Title = "Manifesto", Description = "Let the ruling classes tremble at a Communistic revolution. The proletarians have nothing to lose but their chains. They have a world to win.",
-                            Professor = new Professor() {Username = "manifesto", FirstName = "Friedrich", LastName = "Engels", Password = "123456"  },
+                            ProfessorId = 1,
                             Questions = new Collection<Question>(){
                                 new Question()
                                 {

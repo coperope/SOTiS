@@ -63,7 +63,7 @@ function Login() {
                 saveToken(token);
                 saveUser(user);
                 if (user.permission === 0){
-                  history.push("/student/tests");
+                  history.push("/tests");
                 } else {
                   history.push("/view-knowledge-spaces");
                 }

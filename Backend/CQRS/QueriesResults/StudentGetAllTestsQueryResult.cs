@@ -13,6 +13,7 @@ namespace Backend.CQRS.QueriesResults
             public string Description { get; set; }
             public Professor Professor { get; set; }
             public bool Completed { get; set; }
+            public int? KnowledgeSpaceId { get; set; }
         }
 
         public class Professor

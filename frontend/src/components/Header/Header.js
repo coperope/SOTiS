@@ -187,7 +187,7 @@ function Header() {
           {getUserPermission() === 0 &&
             <List>
               {['My tests', 'All tests'].map((text, index) => (
-                <ListItem button key={text} component={Link} to={index % 2 === 0 ? '/myTests' : '/student/tests'}>
+                <ListItem button key={text} component={Link} to={index % 2 === 0 ? '/myTests' : '/tests'}>
                   <ListItemIcon>{index % 2 === 0 ? <AssignmentIcon /> : <LocalLibraryIcon />}</ListItemIcon>
                   <ListItemText primary={text} />
                 </ListItem>
@@ -199,7 +199,7 @@ function Header() {
           <>
             <List>
               {['Create test', 'All tests'].map((text, index) => (
-                <ListItem button key={text} component={Link} to={index % 2 === 0 ? '/createTest' : '/student/tests'}>
+                <ListItem button key={text} component={Link} to={index % 2 === 0 ? '/createTest' : '/tests'}>
                   <ListItemIcon>{index % 2 === 0 ? <AssignmentIcon /> : <LocalLibraryIcon />}</ListItemIcon>
                   <ListItemText primary={text} />
                 </ListItem>

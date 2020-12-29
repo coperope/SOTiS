@@ -1,6 +1,7 @@
 ﻿using Backend.CQRS.Commands;
 using Backend.CQRS.Processors;
 using Backend.CQRS.Queries;
+using Backend.CQRS.QueriesResults;
 using Backend.Utils.CustomAttributes;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
@@ -57,6 +58,21 @@ namespace Backend.Controllers
             System.Diagnostics.Debug.WriteLine("Testt id: " + test_id);
 
             return Ok();
+        }
+
+        [HttpGet("{professor_id}/tests/{test_id}/qti")]
+        public async Task<ContentResult> GetTestQti(String professor_id, String test_id)
+        {
+            GetTestQtiQuery knowledgeSpaceGetAllQuery = new GetTestQtiQuery();
+            knowledgeSpaceGetAllQuery.TestId = int.Parse(test_id);
+            GetTestQtiQueryResult response = (GetTestQtiQueryResult)await _queryProcessor.Execute(knowledgeSpaceGetAllQuery, _httpContext);
+
+            return new ContentResult
+            {
+                ContentType = "application/xml",
+                Content = response.File,
+                StatusCode = 200
+            };
         }
 
         [Authorize]
