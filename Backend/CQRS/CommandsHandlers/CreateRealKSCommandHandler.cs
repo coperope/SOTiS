@@ -105,7 +105,7 @@ namespace Backend.CQRS.CommandsHandlers
                 levenshteinMatrixExpected[reverseMap[edge.ProblemSourceId.Value], reverseMap[edge.ProblemTargetId.Value]] = 1;
             }
             KnowledgeSpace ksWithAllStates = await findAllPossibleKnowledgeStates(edgePairsMapped, problemIds, realKnowledgeSpace.KnowledgeSpaceId);
-            determinePosibilitiesForAllStates(ksWithAllStates, realKnowledgeSpace.KnowledgeSpaceId, reverseMapForStates, client);
+            await determinePosibilitiesForAllStates(ksWithAllStates, realKnowledgeSpace.KnowledgeSpaceId, reverseMapForStates, client);
             return new CreateRealKSCommandResult
             {
                 Id = createdRealKS.KnowledgeSpaceId,
@@ -229,7 +229,7 @@ namespace Backend.CQRS.CommandsHandlers
             return leavesIds.Distinct().ToList();
         }
         
-        protected async void determinePosibilitiesForAllStates(KnowledgeSpace ksWithAllStates, int realKsId, Dictionary<int, int> reverseMap, HttpClient httpClient)
+        protected async Task<int> determinePosibilitiesForAllStates(KnowledgeSpace ksWithAllStates, int realKsId, Dictionary<int, int> reverseMap, HttpClient httpClient)
         {
             int count = 0;
             PossibleStatesWithPossibilities possibleStatesWithPossibilities = new PossibleStatesWithPossibilities();
@@ -250,9 +250,10 @@ namespace Backend.CQRS.CommandsHandlers
                 var result = await httpClient.PostAsync("http://localhost:8000/kst/probability_for_state", content);
                 var a = await result.Content.ReadAsStringAsync();
 
-                dynamic numberOfStudentsInState = JsonConvert.DeserializeObject<dynamic>(a);
-                possibleStatesWithPossibilities.statePosibilities.Add(state.ProblemId, numberOfStudentsInState);
-                count += int.Parse(numberOfStudentsInState);
+                dynamic someObject = JsonConvert.DeserializeObject<dynamic>(a);
+                var numberOfStudentsInState = JsonConvert.DeserializeObject<int>(someObject);
+                possibleStatesWithPossibilities.statePosibilities.Add(state.ProblemId, (float)numberOfStudentsInState);
+                count += numberOfStudentsInState;
             }
             foreach (KeyValuePair<int, float> entry in possibleStatesWithPossibilities.statePosibilities)
             {
@@ -270,6 +271,7 @@ namespace Backend.CQRS.CommandsHandlers
 
             }
             _possibleStatesWithPossibilitiesRepository.createPossibleStatesWithPossibilities(possibleStatesWithPossibilities);
+            return 0;
         }
     }
 }
