@@ -8,6 +8,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using static Backend.CQRS.QueriesResults.StudentGetOneTestQueryResult;
 
 namespace Backend.Controllers
 {
@@ -47,6 +48,14 @@ namespace Backend.Controllers
         public async Task<IActionResult> GetOneTest(String student_id, int test_id)
         {
             var result = await _queryProcessor.Execute(new StudentGetOneTestQuery() { TestId = test_id }, _httpContext);
+            return Ok(result);
+        }
+
+        [Authorize]
+        [HttpPost("{student_id}/test/{test_id}/next")]
+        public async Task<IActionResult> GetNextQuestion(String student_id, int test_id, Question previousAnsweredQuestion)
+        {
+            var result = await _queryProcessor.Execute(new StudentGetNextQuestionQuery() { TestId = test_id, StudentId = int.Parse(student_id), previousAnsweredQuestion = previousAnsweredQuestion }, _httpContext);
             return Ok(result);
         }
     }

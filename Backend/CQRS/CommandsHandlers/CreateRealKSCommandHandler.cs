@@ -19,11 +19,14 @@ namespace Backend.CQRS.CommandsHandlers
     {
         private readonly IKnowledgeSpaceRepository _knowledgeSpaceRepository;
         private readonly IHttpClientFactory _httpClientFactory;
+        private IPossibleStatesWithPossibilitiesRepository _possibleStatesWithPossibilitiesRepository;
         private IMapper _mapper;
-        public CreateRealKSCommandHandler(IKnowledgeSpaceRepository knowledgeSpaceRepository, IHttpClientFactory httpClientFactory, IMapper mapper)
+        public CreateRealKSCommandHandler(IKnowledgeSpaceRepository knowledgeSpaceRepository,
+            IPossibleStatesWithPossibilitiesRepository possibleStatesWithPossibilitiesRepository, IHttpClientFactory httpClientFactory, IMapper mapper)
         {
             _knowledgeSpaceRepository = knowledgeSpaceRepository;
             _httpClientFactory = httpClientFactory;
+            _possibleStatesWithPossibilitiesRepository = possibleStatesWithPossibilitiesRepository;
             _mapper = mapper;
         }
         public async Task<CreateRealKSCommandResult> Handle(CreateRealKSCommand request, CancellationToken cancellationToken)
@@ -62,6 +65,7 @@ namespace Backend.CQRS.CommandsHandlers
             
             var map = new Dictionary<int, int>();
             var reverseMap = new Dictionary<int, int>();
+            var reverseMapForStates = new Dictionary<int, int>();
             int i = 0;
             List<int> problemIds = new List<int>();
             foreach (Problem problem in sortedProblems)
@@ -76,7 +80,7 @@ namespace Backend.CQRS.CommandsHandlers
 
                 reverseMap.Add(problem.ProblemId, i);
                 map.Add(i++, savedProblem.ProblemId);
-                
+                reverseMapForStates.Add(savedProblem.ProblemId, i);
                 problemIds.Add(savedProblem.ProblemId);
             }
             List<List<int>> edgePairsMapped = new List<List<int>>();
@@ -100,7 +104,8 @@ namespace Backend.CQRS.CommandsHandlers
             {
                 levenshteinMatrixExpected[reverseMap[edge.ProblemSourceId.Value], reverseMap[edge.ProblemTargetId.Value]] = 1;
             }
-            await findAllPossibleKnowledgeStates(edgePairsMapped, problemIds, realKnowledgeSpace.KnowledgeSpaceId);
+            KnowledgeSpace ksWithAllStates = await findAllPossibleKnowledgeStates(edgePairsMapped, problemIds, realKnowledgeSpace.KnowledgeSpaceId);
+            determinePosibilitiesForAllStates(ksWithAllStates, realKnowledgeSpace.KnowledgeSpaceId, reverseMapForStates, client);
             return new CreateRealKSCommandResult
             {
                 Id = createdRealKS.KnowledgeSpaceId,
@@ -164,7 +169,6 @@ namespace Backend.CQRS.CommandsHandlers
             allStatesProblem.X = 600;
             allStatesProblem.Y = 180;
             allStatesProblem = await _knowledgeSpaceRepository.addProblem(allStatesProblem);
-            ksWithAllStates.Problems.Add(allStatesProblem);
             List<int> leaves = findLeavesAmongEdges(edges, allProblemIds);
             int i = 0;
             foreach (int leaf in leaves)
@@ -194,7 +198,6 @@ namespace Backend.CQRS.CommandsHandlers
                 someStateProblem.X = 600 + multiplier * 180;
                 someStateProblem.Y = 180 + (leavesCount - remainingPreviousNodes.Count())*200;
                 someStateProblem = await _knowledgeSpaceRepository.addProblem(someStateProblem);
-                ksWithAllStates.Problems.Add(someStateProblem);
             }
             
             Edge edge = new Edge();
@@ -226,5 +229,40 @@ namespace Backend.CQRS.CommandsHandlers
             return leavesIds.Distinct().ToList();
         }
         
+        protected async void determinePosibilitiesForAllStates(KnowledgeSpace ksWithAllStates, int realKsId, Dictionary<int, int> reverseMap, HttpClient httpClient)
+        {
+            int count = 0;
+            PossibleStatesWithPossibilities possibleStatesWithPossibilities = new PossibleStatesWithPossibilities();
+            foreach (var state in ksWithAllStates.Problems)
+            {
+                List<int> oneStateList = new List<int>();
+                foreach (string oneValueInState in state.Title.Split(' '))
+                {
+                    int index;
+                    if (int.TryParse(oneValueInState, out index))
+                    {
+                        oneStateList.Add(reverseMap[int.Parse(oneValueInState)]);
+                    }
+                }
+                var json = JsonConvert.SerializeObject(oneStateList);
+                var content = new StringContent(json, Encoding.UTF8, "application/json");
+                
+                var result = await httpClient.PostAsync("http://localhost:8000/kst/probability_for_state", content);
+                var a = await result.Content.ReadAsStringAsync();
+
+                dynamic numberOfStudentsInState = JsonConvert.DeserializeObject<dynamic>(a);
+                possibleStatesWithPossibilities.statePosibilities.Add(state.ProblemId, numberOfStudentsInState);
+                count += int.Parse(numberOfStudentsInState);
+            }
+            foreach (KeyValuePair<int, float> entry in possibleStatesWithPossibilities.statePosibilities)
+            {
+                possibleStatesWithPossibilities.statePosibilities[entry.Key] = entry.Value / count;
+            }
+            possibleStatesWithPossibilities.states = ksWithAllStates.Problems;
+            possibleStatesWithPossibilities.KnowledgeSpaceId = realKsId;
+            possibleStatesWithPossibilities.StudentId = null;
+            possibleStatesWithPossibilities.Title =  "Mapping knowlegde states to possibilities for knowledge states: " + ksWithAllStates.KnowledgeSpaceId;
+            _possibleStatesWithPossibilitiesRepository.createPossibleStatesWithPossibilities(possibleStatesWithPossibilities);
+        }
     }
 }

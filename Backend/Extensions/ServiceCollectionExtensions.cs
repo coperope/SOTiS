@@ -20,6 +20,8 @@ namespace Backend.Extensions
             services.AddScoped(typeof(IQuestionRepository), typeof(QuestionRepository));
             services.AddScoped(typeof(IAnswerRepository), typeof(AnswerRepository));
             services.AddScoped(typeof(IKnowledgeSpaceRepository), typeof(KnowledgeSpaceRepository));
+            services.AddScoped(typeof(IPossibleStatesWithPossibilitiesRepository), typeof(PossibleStatesWithPossibilitiesRepository));
+            services.AddScoped(typeof(IStudentCurrentTestRepository), typeof(StudentCurrentTestRepository));
                
             return services;
         }
