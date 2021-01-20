@@ -19,7 +19,6 @@ namespace Backend.Data.Context
         public DbSet<KnowledgeSpace> KnowledgeSpaces { get; set; }
         public DbSet<Edge> Edges { get; set; }
         public DbSet<Problem> Problems { get; set; }
-        public DbSet<StudentCurrentTest> StudentCurrentTests { get; set; }
         public DbSet<PossibleStatesWithPossibilities> PossibleStatesWithPossibilities { get; set; }
         public DataContext(DbContextOptions<DataContext> options) : base(options)
         {

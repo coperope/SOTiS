@@ -4,14 +4,16 @@ using Backend.Data.Context;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 namespace Backend.Migrations
 {
     [DbContext(typeof(DataContext))]
-    partial class DataContextModelSnapshot : ModelSnapshot
+    [Migration("20210120212841_GuidedTesting")]
+    partial class GuidedTesting
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -198,9 +200,6 @@ namespace Backend.Migrations
                         .HasColumnType("float");
 
                     b.Property<double>("Y")
-                        .HasColumnType("float");
-
-                    b.Property<double>("statePosibility")
                         .HasColumnType("float");
 
                     b.HasKey("ProblemId");

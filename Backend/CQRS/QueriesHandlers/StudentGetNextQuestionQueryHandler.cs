@@ -19,14 +19,12 @@ namespace Backend.CQRS.QueriesHandlers
         private IEnrolementRepository _enrolementRepository;
         private IEnrolementAnswerRepository _enrolementAnswerRepository;
         private IKnowledgeSpaceRepository _knowledgeSpaceRepository;
-        private IStudentCurrentTestRepository _studentCurrentTestRepository;
         private IPossibleStatesWithPossibilitiesRepository _possibleStatesWithPossibilitiesRepository;
         private IAnswerRepository _answerRepository;
         private IMapper _mapper;
         public StudentGetNextQuestionQueryHandler(ITestRepository testRepository,
             IEnrolementRepository enrolementRepository,
             IKnowledgeSpaceRepository knowledgeSpaceRepository,
-            IStudentCurrentTestRepository studentCurrentTestRepository,
             IPossibleStatesWithPossibilitiesRepository possibleStatesWithPossibilitiesRepository,
             IEnrolementAnswerRepository enrolementAnswerRepository,
             IAnswerRepository answerRepository, IMapper mapper)
@@ -41,11 +39,10 @@ namespace Backend.CQRS.QueriesHandlers
         }
         public async Task<StudentGetNextQuestionQueryResult> Handle(StudentGetNextQuestionQuery request, CancellationToken cancellationToken)
         {
-            StudentCurrentTest studentsCurrentTest = _studentCurrentTestRepository.getStudentCurrentTest(request.StudentId, request.TestId);
             Test currentTest = await _testRepository.GetSingleTestByIdWithIncludes(request.TestId);
             PossibleStatesWithPossibilities existingpossibleStatesWithPossibilities = _possibleStatesWithPossibilitiesRepository.getPossibleStatesWithPossibilitiesForStudent(request.StudentId);
             Enrolement studentEnrolment = await _enrolementRepository.GetByStudentIdAndTestId(request.StudentId, request.TestId);
-            if (studentsCurrentTest == null)
+            if (request.previousAnsweredQuestion == null)
             {
                 studentEnrolment = new Enrolement();
                 studentEnrolment.StudentId = request.StudentId;
@@ -66,8 +63,6 @@ namespace Backend.CQRS.QueriesHandlers
                 existingpossibleStatesWithPossibilities.Title = "Maintaining probabilities on KS for student: " + request.StudentId;
                 _possibleStatesWithPossibilitiesRepository.createPossibleStatesWithPossibilities(existingpossibleStatesWithPossibilities);
 
-                studentsCurrentTest = await _studentCurrentTestRepository.startStudentCurrentTest(request.StudentId, request.TestId,
-                    currentTest, studentEnrolment.EnrolementId, currentTest.Questions.Select(q => q.QuestionId).ToList());
 
             } 
             if (request.previousAnsweredQuestion != null)
@@ -75,12 +70,11 @@ namespace Backend.CQRS.QueriesHandlers
                 updateProbabilities(existingpossibleStatesWithPossibilities, request.previousAnsweredQuestion);
                 saveAnsweredQuestion(request.previousAnsweredQuestion, studentEnrolment.EnrolementId);
                 _possibleStatesWithPossibilitiesRepository.updatePossibleStatesWithPossibilities(existingpossibleStatesWithPossibilities);
-                studentsCurrentTest.QuestionsLeft.Remove(request.previousAnsweredQuestion.QuestionId);
-                _studentCurrentTestRepository.updateStudentCurrentTest(studentsCurrentTest);
+                
             }
             
             TestView retVal = new TestView();
-            retVal = getNextQuestion(existingpossibleStatesWithPossibilities, studentsCurrentTest, currentTest);
+            retVal = await getNextQuestion(existingpossibleStatesWithPossibilities, request.StudentId, request.TestId, currentTest);
             return new StudentGetNextQuestionQueryResult()
             {
                 TestToReturn = retVal
@@ -113,7 +107,7 @@ namespace Backend.CQRS.QueriesHandlers
                     List<string> splitedTitle = state.Title.Split(" ").ToList();
                     if (splitedTitle.Contains(answeredQuestion.ProblemId.ToString()))
                     {
-                       existingpossibleStatesWithPossibilities.statePosibilities[state.ProblemId] = (float)(existingpossibleStatesWithPossibilities.statePosibilities[state.ProblemId] * 1.3);
+                       state.statePosibility = (float)(state.statePosibility * 1.3);
                     }
                 }
             }
@@ -124,15 +118,16 @@ namespace Backend.CQRS.QueriesHandlers
                     List<string> splitedTitle = state.Title.Split(" ").ToList();
                     if (splitedTitle.Contains(answeredQuestion.ProblemId.ToString()))
                     {
-                        existingpossibleStatesWithPossibilities.statePosibilities[state.ProblemId] = (float)(existingpossibleStatesWithPossibilities.statePosibilities[state.ProblemId] * 0.6);
+                        state.statePosibility = (float)(state.statePosibility * 0.6);
                     }
                 }
             }
         }
-        protected TestView getNextQuestion(PossibleStatesWithPossibilities existingpossibleStatesWithPossibilities, StudentCurrentTest studentsCurrentTest, Test test)
+        protected async Task<TestView> getNextQuestion(PossibleStatesWithPossibilities existingpossibleStatesWithPossibilities, int student_id, int test_id, Test test)
         {
+            Enrolement enrolement = await _enrolementRepository.GetByStudentIdAndTestId(student_id, test_id);
             Dictionary<int, float> questionPossibility = new Dictionary<int, float>();
-            List<Entities.Question> forItteration = test.Questions.Where(x => studentsCurrentTest.QuestionsLeft.Contains(x.QuestionId)).ToList();
+            List<Entities.Question> forItteration = test.Questions.Where(x => enrolement.EnrolementAnswers.Where(t => t.QuestionId.Equals(x.QuestionId)).Count() == 0).ToList();
             foreach (Entities.Question q in forItteration)
             {
                 foreach (Problem problem in existingpossibleStatesWithPossibilities.states)
@@ -141,7 +136,7 @@ namespace Backend.CQRS.QueriesHandlers
                     if (splitedTitle.Contains(q.ProblemId.ToString()))
                     {
                         float temp = questionPossibility.ContainsKey(q.QuestionId) ? questionPossibility[q.QuestionId] : 0;
-                        questionPossibility[q.QuestionId] = temp + existingpossibleStatesWithPossibilities.statePosibilities[problem.ProblemId];
+                        questionPossibility[q.QuestionId] = (float)(temp + problem.statePosibility);
                     }
                 }
             }

@@ -15,6 +15,7 @@ namespace Backend.Data.Repositories.Interfaces
         public Task<List<KnowledgeSpace>> GetAllRealKSOfOriginalKS(int id);
         public  void updateKnowledgeSpace(KnowledgeSpace knowledgeSpace);
         public Task<Problem> addProblem(Problem problem);
+        public void updateProblem(Problem problem);
         public Task<Edge> addEdge(Edge edge);
         public Problem getProblemByTitle(string title);
         public Task<List<KnowledgeSpace>> GetAllPossibleKSOfRealKS(int id);

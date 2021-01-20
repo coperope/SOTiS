@@ -262,6 +262,13 @@ namespace Backend.CQRS.CommandsHandlers
             possibleStatesWithPossibilities.KnowledgeSpaceId = realKsId;
             possibleStatesWithPossibilities.StudentId = null;
             possibleStatesWithPossibilities.Title =  "Mapping knowlegde states to possibilities for knowledge states: " + ksWithAllStates.KnowledgeSpaceId;
+            foreach (Problem p in possibleStatesWithPossibilities.states)
+            {
+                p.statePosibility = possibleStatesWithPossibilities.statePosibilities[p.ProblemId];
+                _knowledgeSpaceRepository.updateProblem(p);
+
+
+            }
             _possibleStatesWithPossibilitiesRepository.createPossibleStatesWithPossibilities(possibleStatesWithPossibilities);
         }
     }

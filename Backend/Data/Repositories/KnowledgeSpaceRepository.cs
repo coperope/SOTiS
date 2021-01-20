@@ -109,6 +109,10 @@ namespace Backend.Data.Repositories
             _context.SaveChanges();
             return retVal.Entity;
         }
+        public void updateProblem(Problem problem) { 
+            _context.Problems.Update(problem);
+            _context.SaveChanges();
+        }
 
         public async Task<Edge> addEdge(Edge edge)
         {
