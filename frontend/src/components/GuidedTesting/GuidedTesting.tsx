@@ -3,9 +3,10 @@ import { useParams } from 'react-router-dom';
 import { Grid, Typography, Button } from '@material-ui/core';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 
-import QuestionView from './Question/Question'
+import QuestionView from '../TestView/Question/Question'
 import {
   BASE_URL,
+  GET_GUIDED_TEST_STUDENT,
   GET_SINGLE_TEST_STUDENT,
   SUBMIT_TEST,
 } from '../../utils/apiUrls';
@@ -62,24 +63,22 @@ const submit = async (test: TestData) => {
   }
 }
 
-const TestView = () => {
+const GuidedTesting = () => {
   const classes = useStyles();
   const { testId } = useParams<ParamTypes>();
-  const { data, executeFetch, hasError } = useFetch(BASE_URL + GET_SINGLE_TEST_STUDENT(getUser().id, testId), "get");
+  const { data, executeFetch, hasError } = useFetch(BASE_URL + GET_GUIDED_TEST_STUDENT(getUser().id, testId), "post", null);
 
   const [test, setTest] = useState<TestData>(data?.test);
 
   useEffect(() => {
     setTest(data?.test);
   }, [data]);
+  console.log(test);
 
-  const submitTest = async () => {
+  const nextQuestion = async () => {
     const submitedTest = JSON.parse(JSON.stringify(test))
-    const success = await submit(submitedTest);
-    console.log(success);
-    if (success) {
-      executeFetch(BASE_URL + GET_SINGLE_TEST_STUDENT(getUser().id, testId), "get");
-    }
+    await executeFetch(BASE_URL + GET_GUIDED_TEST_STUDENT(getUser().id, testId), "post", submitedTest.questions[0]);
+    //console.log(success);
   }
 
   return (
@@ -99,30 +98,28 @@ const TestView = () => {
           alignItems="center"
           style={{ paddingTop: "3em" }} >
 
-          {test?.questions.map((question: Question) => (
-            <Grid item xs={8} key={question.questionId} style={{ paddingTop: "2em", paddingBottom: "2em" }}>
+            <Grid item xs={8} key={test?.questions[0]?.questionId} style={{ paddingTop: "2em", paddingBottom: "2em" }}>
               <QuestionView
-                questionId={question.questionId}
-                text={question.text}
-                answers={question.answers}
-                selectedAnswers={question.selectedAnswers}
-                completed={test.completed}
+                questionId={test?.questions[0]?.questionId}
+                text={test?.questions[0]?.text}
+                answers={test?.questions[0]?.answers}
+                selectedAnswers={test?.questions[0]?.selectedAnswers}
+                completed={false}
               />
             </Grid>
-          ))}
         </Grid>
         <Grid container
           spacing={3}
           justify="center"
           alignItems="center"
           style={{ paddingTop: "6em", paddingBottom: "6em" }} >
-          {!test?.completed && <Button onClick={submitTest} variant="contained" color="primary" className={classes.button}>
-            Finish test
-          </Button>}
+          <Button onClick={nextQuestion} variant="contained" color="primary" className={classes.button}>
+            Next question
+          </Button>
         </Grid>
       </Grid>
     </div>
   );
 };
 
-export default TestView
+export default GuidedTesting

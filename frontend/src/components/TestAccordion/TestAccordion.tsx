@@ -45,9 +45,14 @@ const TestAccordion = (props: TestAccordionProps) => {
       </AccordionDetails>
       <AccordionActions>
         {getUserPermission() === 0 &&
-          <Button onClick={() => history.push(`/student/test/${props.testId}`)} variant="contained" color="primary" className={classes.button}>
-            {props.completed ? "Show results" : "Enroll"}
-          </Button>
+          <>
+            <Button onClick={() => history.push(`/student/test/${props.testId}`)} variant="contained" color="primary" className={classes.button}>
+              {props.completed ? "Show results" : "Enroll"}
+            </Button>
+            <Button onClick={() => history.push(`/student/test/guided/${props.testId}`)} variant="contained" color="primary" className={classes.button}>
+              Guided testing
+            </Button>
+          </>
         }
 
         {getUserPermission() === 1 &&

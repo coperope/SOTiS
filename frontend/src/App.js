@@ -12,6 +12,7 @@ import Header from './components/Header/Header.js'
 import TestView from './components/TestView/TestView'
 import { CreateKnowledgeSpace } from './components/CreateKnowledgeSpace/CreateKnowledgeSpace'
 import ListKnowledgeSpaces from './components/ListKnowledgeSpaces/ListKnowledgeSpaces'
+import GuidedTesting from './components/GuidedTesting/GuidedTesting'
 
 function App() {
   return (
@@ -41,6 +42,11 @@ function App() {
         <Route exact path="/student/test/:testId" render={props => (
           <React.Fragment>
             <TestView></TestView>
+          </React.Fragment>
+        )} />
+        <Route exact path="/student/test/guided/:testId" render={props => (
+          <React.Fragment>
+            <GuidedTesting></GuidedTesting>
           </React.Fragment>
         )} />
         <Route exact path="/createTest" render={props => (

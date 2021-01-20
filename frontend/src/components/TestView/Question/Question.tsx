@@ -77,7 +77,7 @@ const QuestionView = (question: QuestionProps) => {
           justify="center"
           alignItems="stretch" >
 
-          {question?.answers.map((answer: Answer) => (
+          {question?.answers?.map((answer: Answer) => (
             <Grid container item
               xs={12}
               key={answer.answerId}
