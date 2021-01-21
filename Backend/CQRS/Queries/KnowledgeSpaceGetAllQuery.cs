@@ -9,5 +9,6 @@ namespace Backend.CQRS.Queries
         public CQRSRole Permission { get; } = CQRSRole.Professor;
         public int? UserId { get; set; }
         public int ProfessorId { get; set; }
+        public bool Real { get; set; }
     }
 }

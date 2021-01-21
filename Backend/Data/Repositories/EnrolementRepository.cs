@@ -33,6 +33,8 @@ namespace Backend.Data.Repositories
         public async Task<Enrolement> GetByStudentIdAndTestId(int studentId, int testId)
         {
             return await _context.Enrolements
+                .Include(e => e.EnrolementAnswers)
+                    .ThenInclude(ea => ea.Question)
                 .FirstOrDefaultAsync(e => e.StudentId == studentId && e.TestId == testId);
         }
 
@@ -43,6 +45,12 @@ namespace Backend.Data.Repositories
                 .Include(e => e.EnrolementAnswers)
                 .ThenInclude(ea => ea.Answer)
                 .FirstOrDefaultAsync();
+        }
+
+        public void UpdateEnrolement(Enrolement enrolement)
+        {
+            _context.Enrolements.Update(enrolement);
+            _context.SaveChanges();
         }
     }
 }

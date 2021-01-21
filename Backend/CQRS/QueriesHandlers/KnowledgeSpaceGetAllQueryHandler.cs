@@ -26,7 +26,16 @@ namespace Backend.CQRS.QueriesHandlers
 
         public async Task<KnowledgeSpaceGetAllQueryResult> Handle(KnowledgeSpaceGetAllQuery request, CancellationToken cancellationToken)
         {
-            var result = await _knowledgeSpaceRepository.GetKnowledgeSpacesOfProfessor(request.ProfessorId);
+            List<Entities.KnowledgeSpace> result;
+            if (request.Real)
+            {
+                result = await _knowledgeSpaceRepository.GetRealKnowledgeSpacesOfProfessor(request.ProfessorId);
+            }
+            else
+            {
+                result = await _knowledgeSpaceRepository.GetKnowledgeSpacesOfProfessor(request.ProfessorId);
+
+            }
             return new KnowledgeSpaceGetAllQueryResult
             {
                 KnowledgeSpaces = result

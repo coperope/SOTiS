@@ -42,7 +42,7 @@ namespace Backend.CQRS.QueriesHandlers
             Test currentTest = await _testRepository.GetSingleTestByIdWithIncludes(request.TestId);
             PossibleStatesWithPossibilities existingpossibleStatesWithPossibilities = _possibleStatesWithPossibilitiesRepository.getPossibleStatesWithPossibilitiesForStudent(request.StudentId);
             Enrolement studentEnrolment = await _enrolementRepository.GetByStudentIdAndTestId(request.StudentId, request.TestId);
-            if (request.previousAnsweredQuestion == null)
+            if (request.previousAnsweredQuestion.Answers == null)
             {
                 studentEnrolment = new Enrolement();
                 studentEnrolment.StudentId = request.StudentId;
@@ -50,22 +50,32 @@ namespace Backend.CQRS.QueriesHandlers
                 studentEnrolment.Completed = false;
                 studentEnrolment = await _enrolementRepository.CreateEnrolement(studentEnrolment);
 
-                List<KnowledgeSpace> knowledgeSpace = await _knowledgeSpaceRepository.GetAllRealKSOfOriginalKS(currentTest.KnowledgeSpaceId);
-                PossibleStatesWithPossibilities possibleStatesWithPossibilities = _possibleStatesWithPossibilitiesRepository.getPossibleStatesWithPossibilities(knowledgeSpace[0].KnowledgeSpaceId);
+                PossibleStatesWithPossibilities possibleStatesWithPossibilities = _possibleStatesWithPossibilitiesRepository.getPossibleStatesWithPossibilities(currentTest.KnowledgeSpaceId);
                 existingpossibleStatesWithPossibilities = new PossibleStatesWithPossibilities();
-                existingpossibleStatesWithPossibilities.states = possibleStatesWithPossibilities.states;
-                foreach (KeyValuePair<int, float> entry in possibleStatesWithPossibilities.statePosibilities)
-                {
-                    existingpossibleStatesWithPossibilities.statePosibilities.Add(entry.Key, entry.Value);
-                }
+                //existingpossibleStatesWithPossibilities.states = possibleStatesWithPossibilities.states;
+                //foreach (KeyValuePair<int, float> entry in possibleStatesWithPossibilities.statePosibilities)
+                //{
+                //    existingpossibleStatesWithPossibilities.statePosibilities.Add(entry.Key, entry.Value);
+                //}
                 existingpossibleStatesWithPossibilities.KnowledgeSpaceId = null;
                 existingpossibleStatesWithPossibilities.StudentId = request.StudentId;
                 existingpossibleStatesWithPossibilities.Title = "Maintaining probabilities on KS for student: " + request.StudentId;
+                existingpossibleStatesWithPossibilities.states = new List<Problem>();
+                foreach (Problem problem in possibleStatesWithPossibilities.states)
+                {
+                    Problem newProblem = new Problem();
+                    newProblem.ProblemId = new int();
+                    newProblem.KnowledgeSpaceId = problem.KnowledgeSpaceId;
+                    newProblem.X = problem.X;
+                    newProblem.Y = problem.Y;
+                    newProblem.Title = problem.Title;
+                    newProblem.statePosibility = problem.statePosibility;
+                    var savedProblem = await _knowledgeSpaceRepository.addProblem(newProblem);
+                    existingpossibleStatesWithPossibilities.states.Add(savedProblem);
+                }
                 _possibleStatesWithPossibilitiesRepository.createPossibleStatesWithPossibilities(existingpossibleStatesWithPossibilities);
-
-
             } 
-            if (request.previousAnsweredQuestion != null)
+            if (request.previousAnsweredQuestion.Answers != null)
             {
                 updateProbabilities(existingpossibleStatesWithPossibilities, request.previousAnsweredQuestion);
                 saveAnsweredQuestion(request.previousAnsweredQuestion, studentEnrolment.EnrolementId);
@@ -127,7 +137,10 @@ namespace Backend.CQRS.QueriesHandlers
         {
             Enrolement enrolement = await _enrolementRepository.GetByStudentIdAndTestId(student_id, test_id);
             Dictionary<int, float> questionPossibility = new Dictionary<int, float>();
-            List<Entities.Question> forItteration = test.Questions.Where(x => enrolement.EnrolementAnswers.Where(t => t.QuestionId.Equals(x.QuestionId)).Count() == 0).ToList();
+            List<Entities.Question> forItteration = enrolement.EnrolementAnswers != null ?
+                test.Questions.Where(x => enrolement.EnrolementAnswers.Where(t => t.QuestionId.Equals(x.QuestionId)).Count() == 0).ToList() 
+                :
+                test.Questions.ToList();
             foreach (Entities.Question q in forItteration)
             {
                 foreach (Problem problem in existingpossibleStatesWithPossibilities.states)
@@ -140,13 +153,33 @@ namespace Backend.CQRS.QueriesHandlers
                     }
                 }
             }
-            int maxKeyQuestion = questionPossibility.Aggregate((x, y) => x.Value > y.Value ? x : y).Key;
-            TestView retVal = new TestView();
-            _mapper.Map(test, retVal);
-            retVal.Questions = new List<StudentGetOneTestQueryResult.Question>();
-            retVal.Questions.Add(_mapper.Map<Entities.Question,StudentGetOneTestQueryResult.Question>(forItteration.Find(x => x.QuestionId == maxKeyQuestion)));
-            return retVal;
 
+            if (forItteration.Count != 0)
+            {
+                int maxKeyQuestion = questionPossibility.Aggregate((x, y) => x.Value > y.Value ? x : y).Key;
+                TestView retVal = new TestView();
+                _mapper.Map(test, retVal);
+                retVal.Questions = new List<StudentGetOneTestQueryResult.Question>();
+                retVal.Questions.Add(_mapper.Map<Entities.Question, StudentGetOneTestQueryResult.Question>(forItteration.Find(x => x.QuestionId == maxKeyQuestion)));
+                foreach (StudentGetOneTestQueryResult.Question q in retVal.Questions)
+                {
+                    q.SelectedAnswers = new List<StudentGetOneTestQueryResult.Answer>();
+                }
+
+                return retVal;
+            } else
+            {
+                enrolement.Completed = true;
+                _enrolementRepository.UpdateEnrolement(enrolement);
+                TestView retVal = new TestView();
+                _mapper.Map(test, retVal);
+                retVal.Questions = new List<StudentGetOneTestQueryResult.Question>();
+                foreach (StudentGetOneTestQueryResult.Question q in retVal.Questions)
+                {
+                    q.SelectedAnswers = new List<StudentGetOneTestQueryResult.Answer>();
+                }
+                return retVal;
+            }
         }
         protected async void saveAnsweredQuestion(StudentGetOneTestQueryResult.Question q, int enrolementId)
         {

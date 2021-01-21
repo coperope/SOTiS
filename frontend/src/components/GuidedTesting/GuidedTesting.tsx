@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useHistory, useParams } from 'react-router-dom';
 import { Grid, Typography, Button } from '@material-ui/core';
 import ExpandMoreIcon from '@material-ui/icons/ExpandMore';
 
@@ -65,15 +65,20 @@ const submit = async (test: TestData) => {
 
 const GuidedTesting = () => {
   const classes = useStyles();
+  const history = useHistory();
+
   const { testId } = useParams<ParamTypes>();
-  const { data, executeFetch, hasError } = useFetch(BASE_URL + GET_GUIDED_TEST_STUDENT(getUser().id, testId), "post", null);
+  const { data, executeFetch, hasError } = useFetch(BASE_URL + GET_GUIDED_TEST_STUDENT(getUser().id, testId), "post", {});
 
   const [test, setTest] = useState<TestData>(data?.test);
 
   useEffect(() => {
-    setTest(data?.test);
+    if (data?.testToReturn?.questions?.length === 0) {
+      history.push(`/student/test/${data?.testToReturn?.testId}`);
+    }
+    setTest(data?.testToReturn);
+    
   }, [data]);
-  console.log(test);
 
   const nextQuestion = async () => {
     const submitedTest = JSON.parse(JSON.stringify(test))

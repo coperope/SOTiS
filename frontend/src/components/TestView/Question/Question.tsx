@@ -14,11 +14,11 @@ const QuestionView = (question: QuestionProps) => {
 
   useEffect(() => {
     const selected = question?.selectedAnswers?.map(a => a.answerId);
-    setCheckedArray(selected);
+    setCheckedArray(selected ? selected : []);
   }, [question]);
 
   const checked = (answerId: string) => {
-    return checkedArray.some(id => id === answerId);
+    return checkedArray?.some(id => id === answerId);
   }
 
   const selectAnswer = (event: any, answerId: string) => {
@@ -29,7 +29,7 @@ const QuestionView = (question: QuestionProps) => {
     if (!answer) {
       return;
     }
-    const alreadySelected = checkedArray.some(id => id === answerId);
+    const alreadySelected = checkedArray?.some(id => id === answerId);
     if (!alreadySelected) {
       question?.selectedAnswers?.push(answer);
       setCheckedArray(checkedArray.concat(answerId));

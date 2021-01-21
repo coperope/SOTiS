@@ -17,9 +17,10 @@ namespace Backend.Data.Repositories
         {
             _context = context ?? throw new ArgumentNullException(nameof(context));
         }
-        public PossibleStatesWithPossibilities createPossibleStatesWithPossibilities(PossibleStatesWithPossibilities possibleStatesWithPossibilities)
+        public void createPossibleStatesWithPossibilities(PossibleStatesWithPossibilities possibleStatesWithPossibilities)
         {
-            return _context.PossibleStatesWithPossibilities.Add(possibleStatesWithPossibilities).Entity;
+            _context.PossibleStatesWithPossibilities.Add(possibleStatesWithPossibilities);
+            _context.SaveChanges();
         }
 
         public PossibleStatesWithPossibilities getPossibleStatesWithPossibilities(int knowledgeSpaceId)
@@ -27,7 +28,6 @@ namespace Backend.Data.Repositories
             return _context.PossibleStatesWithPossibilities
                 .Where(x => x.KnowledgeSpaceId == knowledgeSpaceId)
                 .Include(x => x.states)
-                .Include(x => x.statePosibilities)
                 .FirstOrDefault();
         }
         public PossibleStatesWithPossibilities getPossibleStatesWithPossibilitiesForStudent(int student_id)
@@ -35,7 +35,6 @@ namespace Backend.Data.Repositories
             return _context.PossibleStatesWithPossibilities
                 .Where(x => x.StudentId == student_id)
                 .Include(x => x.states)
-                .Include(x => x.statePosibilities)
                 .FirstOrDefault();
         }
 

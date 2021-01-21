@@ -65,6 +65,16 @@ namespace Backend.Data.Repositories
             return result;
         }
 
+        public async Task<List<KnowledgeSpace>> GetRealKnowledgeSpacesOfProfessor(int ProfessorId)
+        {
+            List<KnowledgeSpace> result = await _context.KnowledgeSpaces
+                .Where(t => t.ProfessorId == ProfessorId)
+                .Where(t => t.IsReal == true)
+                .Include(t => t.Professor)
+                .ToListAsync();
+            return result;
+        }
+
         public async Task<KnowledgeSpace> GetSingleKnowledgeSpaceByIdWidthIncludes(int id)
         {
             return await _context.KnowledgeSpaces

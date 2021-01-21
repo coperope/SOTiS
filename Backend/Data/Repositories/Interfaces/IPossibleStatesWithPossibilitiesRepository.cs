@@ -10,7 +10,7 @@ namespace Backend.Data.Repositories.Interfaces
     {
         public PossibleStatesWithPossibilities getPossibleStatesWithPossibilities(int knowledgeSpaceId);
         public PossibleStatesWithPossibilities getPossibleStatesWithPossibilitiesForStudent(int student_id);
-        public PossibleStatesWithPossibilities createPossibleStatesWithPossibilities(PossibleStatesWithPossibilities possibleStatesWithPossibilities);
+        public void createPossibleStatesWithPossibilities(PossibleStatesWithPossibilities possibleStatesWithPossibilities);
         public void updatePossibleStatesWithPossibilities(PossibleStatesWithPossibilities possibleStatesWithPossibilities);
     }
 }

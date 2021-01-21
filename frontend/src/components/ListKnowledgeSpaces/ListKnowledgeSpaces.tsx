@@ -16,7 +16,7 @@ import { getUser } from '../../utils/authUtils';
 const ListKnowledgeSpaces = () => {
   const classes = useStyles();
   const [spaces, setSpaces] = useState([]);
-  const { data } = useFetch(BASE_URL + GET_PROFESSOR_KNOWLEDGE_SPACES(getUser().id), "get");
+  const { data } = useFetch(BASE_URL + GET_PROFESSOR_KNOWLEDGE_SPACES(getUser().id, "0"), "get");
   const history = useHistory();
 
   useEffect(() => {

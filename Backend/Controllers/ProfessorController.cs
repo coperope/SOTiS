@@ -85,14 +85,17 @@ namespace Backend.Controllers
         }
 
         [Authorize]
-        [HttpGet("{professor_id}/knowledge_space")]
-        public async Task<IActionResult> GetAllKnowledgeSpaceOfProfessor(String professor_id)
+        [HttpGet("{professor_id}/knowledge_space/real/{flag}")]
+        public async Task<IActionResult> GetAllKnowledgeSpaceOfProfessor(String professor_id, String flag)
         {
             KnowledgeSpaceGetAllQuery knowledgeSpaceGetAllQuery = new KnowledgeSpaceGetAllQuery();
             knowledgeSpaceGetAllQuery.ProfessorId = int.Parse(professor_id);
+            knowledgeSpaceGetAllQuery.Real = flag.Equals("1");
+
             var response = await _queryProcessor.Execute(knowledgeSpaceGetAllQuery, _httpContext);
             return Ok(response);
         }
+
 
         [Authorize]
         [HttpGet("{professor_id}/knowledge_space/{knowledge_space_id}")]

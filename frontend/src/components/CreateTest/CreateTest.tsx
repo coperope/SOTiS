@@ -63,7 +63,7 @@ function CreateTest() {
   const classes = useStyles();
   const [knowledgeSpace, setKnowledgeSpace] = useState('');
   const [knowledgeSpaceSelected, setKnowledgeSpaceSelected] = useState<any>({});
-  const { data } = useFetch(BASE_URL + GET_ALL_KNOWLEDGE_SPACES(getUser().id), "get");
+  const { data } = useFetch(BASE_URL + GET_ALL_KNOWLEDGE_SPACES(getUser().id, "1"), "get");
   const [questions, setQuestions] = useState<Array<Question>>(Array<Question>());
   const [problemSelected, setProblemSelected] = useState<any>("");
   const [blankQuestion, setBlankQuestion] = useState<any>({
